@@ -4,7 +4,6 @@ updates:
     directory: '/'
     schedule:
       interval: 'monthly'
-      day: 'saturday'
     versioning-strategy: 'increase'
     labels:
       - 'dependencies'
