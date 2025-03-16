@@ -132,6 +132,8 @@ EXAMPLES
 
 In my use case, we use `sfdx-git-delta` to create incremental packages via the git diff, but we also allow the developers to declare additional metadata to deploy via the GitLab merge request description/commit message. Instead of needing the developers to copy and paste an entire package.xml into the description, which may cause errors if XML formatting is off, we use this custom package list format to provide a simpler way for developers to provide metadata without needing to conform to the XML schema.
 
+We also use this package list format to run destructive deployments from a GitLab web-based pipeline (created by using the "Run pipeline" button in the GitLab UI). The developer provides this list as the job-specific CI/CD variable and the pipeline converts this list into the `destructiveChanges.xml`.
+
 ## Issues
 
 If you encounter any issues or would like to suggest features, please create an [issue](https://github.com/mcarvin8/sf-package-list/issues).
