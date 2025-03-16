@@ -79,7 +79,7 @@ It's a way to streamline deployments and make metadata management more accessibl
 - [`sf sfpl list`](#sf-sfpl-list)
 - [`sf sfpl xml`](#sf-sfpl-xml)
 
-## `sf sfpl list`
+### `sf sfpl list`
 
 Convert a Salesforce package.xml into list format.
 
@@ -99,12 +99,11 @@ EXAMPLES
   Convert package.xml into list format in a text file.
 
     $ sf sfpl list -x package.xml -l package.txt
-
 ```
 
 <!-- commandsstop -->
 
-## `sf sfpl xml`
+### `sf sfpl xml`
 
 Convert a package list back into a Salesforce package.xml.
 
@@ -123,7 +122,6 @@ EXAMPLES
   Convert the list file back into a Salesforce package.xml
 
     $ sf sfpl xml -x package.xml -l package.txt
-
 ```
 
 <!-- commandsstop -->
