@@ -122,7 +122,7 @@ GLOBAL FLAGS
 EXAMPLES
   Convert the list file back into a Salesforce package.xml
 
-    $ sf sfpl list -x package.xml -l package.txt
+    $ sf sfpl xml -x package.xml -l package.txt
 
 ```
 
