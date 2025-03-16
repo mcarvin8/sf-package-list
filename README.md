@@ -7,6 +7,7 @@
   <summary>Table of Contents</summary>
 
 - [Install](#install)
+- [Example](#example)
 - [Why](#why)
 - [Commands](#commands)
   - [`sf-sfpl-list`](#sf-sfpl-list)
@@ -22,6 +23,41 @@ Convert Salesforce manifest files (`package.xml`) into list format and reverse t
 
 ```bash
 sf plugins install sf-package-list@x.y.z
+```
+
+## Example
+
+**Package.xml**
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>Auto</members>
+        <name>customlabel</name>
+    </types>
+    <types>
+        <members>ABC</members>
+        <members>Account</members>
+        <members>Case</members>
+        <name>customobject</name>
+    </types>
+    <types>
+        <members>Glengarry_Leadz</members>
+        <members>Industry</members>
+        <name>standardvalueset</name>
+    </types>
+    <version>59.0</version>
+</Package>
+```
+
+**Package List**
+
+```
+CustomLabel: Auto
+CustomObject: ABC, Account, Case
+StandardValueSet: Glengarry_Leadz, Industry
+Version: 59.0
 ```
 
 ## Why
