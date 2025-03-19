@@ -1,4 +1,4 @@
-# sf-package-list
+# `sf-package-list`
 
 [![NPM](https://img.shields.io/npm/v/sf-package-list.svg?label=sf-package-list)](https://www.npmjs.com/package/sf-package-list) [![Downloads/week](https://img.shields.io/npm/dw/sf-package-list.svg)](https://npmjs.org/package/sf-package-list) [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://raw.githubusercontent.com/mcarvin8/sf-package-list/refs/heads/main/LICENSE.md)
 
@@ -33,18 +33,20 @@ sf plugins install sf-package-list@x.y.z
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>Auto</members>
+        <members>Always_Be_Closing</members>
+        <members>Attention_Interest_Decision_Action</members>
+        <members>Leads_Are_Gold</members>
         <name>customlabel</name>
     </types>
     <types>
         <members>ABC</members>
-        <members>Account</members>
-        <members>Case</members>
+        <members>Glengarry</members>
+        <members>Mitch_And_Murray</members>
         <name>customobject</name>
     </types>
     <types>
-        <members>Glengarry_Leadz</members>
-        <members>Industry</members>
+        <members>Glengarry_Leads</members>
+        <members>Cadillac_Eldorado</members>
         <name>standardvalueset</name>
     </types>
     <version>59.0</version>
@@ -54,9 +56,9 @@ sf plugins install sf-package-list@x.y.z
 **Package List**
 
 ```
-CustomLabel: Auto
-CustomObject: ABC, Account, Case
-StandardValueSet: Glengarry_Leadz, Industry
+CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold
+CustomObject: ABC, Glengarry, Mitch_And_Murray
+StandardValueSet: Glengarry_Leads, Cadillac_Eldorado
 Version: 59.0
 ```
 
