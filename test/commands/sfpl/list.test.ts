@@ -15,6 +15,8 @@ describe('sfpc combine', () => {
   const list1 = resolve('test/samples/list1.txt');
   const package2 = resolve('test/samples/package2.xml');
   const list2 = resolve('test/samples/list2.txt');
+  const package3 = resolve('test/samples/package3.xml');
+  const list3 = resolve('test/samples/list3.txt');
   const outputXml = resolve('package.xml');
   const invalidPackage1 = resolve('test/samples/invalid1.xml');
 
@@ -66,6 +68,26 @@ describe('sfpc combine', () => {
     const actualOutput = await readFile(outputXml, 'utf-8')
     expect(output.trim()).to.equal('The package XML has been written to package.xml');
     strictEqual(actualOutput, expectedOutput, `Mismatch between ${package2} and ${outputXml}`);
+  });
+  it('convert the package 3 into list format.', async () => {
+    await SfplList.run(['-x', package3]);
+    const output = sfCommandStubs.log
+      .getCalls()
+      .flatMap((c) => c.args)
+      .join('\n');
+    const expectedOutput = 'CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold\nCustomObject: ABC, Glengarry, Mitch_And_Murray\nCustomField: Glengarry.Weak_Leadz__c, Coffee.is_Closer__c\nEmailTemplate: unfiled$public/Second_Prize_Set_of_Steak_Knives\nStandardValueSet: Glengarry_Leads, Cadillac_Eldorado\nVersion: 59.0';
+    expect(output.trim()).to.equal(expectedOutput);
+  });
+  it('convert the list 3 back into a XML.', async () => {
+    await SfplXml.run(['-l', list3]);
+    const output = sfCommandStubs.log
+      .getCalls()
+      .flatMap((c) => c.args)
+      .join('\n');
+    const expectedOutput = await readFile(package3, 'utf-8');
+    const actualOutput = await readFile(outputXml, 'utf-8')
+    expect(output.trim()).to.equal('The package XML has been written to package.xml');
+    strictEqual(actualOutput, expectedOutput, `Mismatch between ${package3} and ${outputXml}`);
   });
   it('test the invalid packages.', async () => {
     await SfplList.run(['-x', invalidPackage1]);

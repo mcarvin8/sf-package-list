@@ -64,6 +64,8 @@ sf plugins install sf-package-list@x.y.z
 
 **Package List**
 
+> Multiple metadata members can be separated by commas or spaces.
+
 ```
 CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold
 CustomObject: ABC, Glengarry, Mitch_And_Murray
@@ -141,7 +143,7 @@ EXAMPLES
 
 ## Use Case
 
-In my use case, we use `sfdx-git-delta` to create incremental packages via the git diff, but we also allow the developers to declare additional metadata to deploy via the GitLab merge request description/commit message. Instead of needing the developers to copy and paste an entire package.xml into the description, which may cause errors if XML formatting is off, we use this custom package list format to provide a simpler way for developers to provide metadata without needing to conform to the XML schema.
+In my use case, we use `sfdx-git-delta` to create incremental packages via the git diff, but we also allow the developers to declare additional metadata to deploy via the GitLab merge request description/commit message. Instead of needing the developers to copy and paste an entire `package.xml` into the description, which may cause errors if XML formatting is off, we use this custom package list format to provide a simpler way for developers to provide metadata without needing to conform to the XML schema.
 
 We also use this package list format to run destructive deployments from a GitLab web-based pipeline (created by using the "Run pipeline" button in the GitLab UI). The developer provides this list as the job-specific CI/CD variable and the pipeline converts this list into the `destructiveChanges.xml`.
 
