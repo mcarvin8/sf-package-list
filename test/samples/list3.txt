@@ -1,0 +1,6 @@
+CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action Leads_Are_Gold
+CustomObject: ABC, Glengarry, Mitch_And_Murray
+CustomField: Glengarry.Weak_Leadz__c, Coffee.is_Closer__c
+EmailTemplate: unfiled$public/Second_Prize_Set_of_Steak_Knives
+StandardValueSet: Glengarry_Leads  Cadillac_Eldorado
+Version: 59.0
