@@ -50,6 +50,10 @@ sf plugins install sf-package-list@x.y.z
         <name>CustomField</name>
     </types>
     <types>
+        <members>unfiled$public/Second_Prize_Set_of_Steak_Knives</members>
+        <name>EmailTemplate</name>
+    </types>
+    <types>
         <members>Glengarry_Leads</members>
         <members>Cadillac_Eldorado</members>
         <name>StandardValueSet</name>
@@ -64,6 +68,7 @@ sf plugins install sf-package-list@x.y.z
 CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold
 CustomObject: ABC, Glengarry, Mitch_And_Murray
 CustomField: Glengarry.Weak_Leadz__c, Coffee.is_Closer__c
+EmailTemplate: unfiled$public/Second_Prize_Set_of_Steak_Knives
 StandardValueSet: Glengarry_Leads, Cadillac_Eldorado
 Version: 59.0
 ```
