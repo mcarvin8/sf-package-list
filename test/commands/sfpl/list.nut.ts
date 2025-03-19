@@ -63,6 +63,6 @@ describe('sfpc combine NUTs', () => {
     const expectedOutput = await readFile(package3, 'utf-8');
     const actualOutput = await readFile(outputXml, 'utf-8')
     expect(output.trim()).to.equal('The package XML has been written to package.xml');
-    strictEqual(actualOutput, expectedOutput, `Mismatch between ${package2} and ${outputXml}`);
+    strictEqual(actualOutput, expectedOutput, `Mismatch between ${package3} and ${outputXml}`);
   });
 });
