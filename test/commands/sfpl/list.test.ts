@@ -75,7 +75,7 @@ describe('sfpc combine', () => {
       .getCalls()
       .flatMap((c) => c.args)
       .join('\n');
-    const expectedOutput = 'CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold; CustomObject: ABC, Glengarry, Mitch_And_Murray; CustomField: Glengarry.Weak_Leadz__c, Coffee.is_Closer__c; EmailTemplate: unfiled$public/Second_Prize_Set_of_Steak_Knives; StandardValueSet: Glengarry_Leads, Cadillac_Eldorado; Version: 59.0';
+    const expectedOutput = 'CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold\nCustomObject: ABC, Glengarry, Mitch_And_Murray\nCustomField: Glengarry.Weak_Leadz__c, Coffee.is_Closer__c\nEmailTemplate: unfiled$public/Second_Prize_Set_of_Steak_Knives\nStandardValueSet: Glengarry_Leads, Cadillac_Eldorado\nVersion: 59.0';
     expect(output.trim()).to.equal(expectedOutput);
   });
   it('convert the list 3 back into a XML.', async () => {
