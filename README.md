@@ -36,18 +36,18 @@ sf plugins install sf-package-list@x.y.z
         <members>Always_Be_Closing</members>
         <members>Attention_Interest_Decision_Action</members>
         <members>Leads_Are_Gold</members>
-        <name>customlabel</name>
+        <name>CustomLabel</name>
     </types>
     <types>
         <members>ABC</members>
         <members>Glengarry</members>
         <members>Mitch_And_Murray</members>
-        <name>customobject</name>
+        <name>CustomObject</name>
     </types>
     <types>
         <members>Glengarry_Leads</members>
         <members>Cadillac_Eldorado</members>
-        <name>standardvalueset</name>
+        <name>StandardValueSet</name>
     </types>
     <version>59.0</version>
 </Package>
