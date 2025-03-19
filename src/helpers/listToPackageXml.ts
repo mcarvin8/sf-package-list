@@ -25,7 +25,7 @@ export async function listToPackageXml(list: string): Promise<string> {
       packageJson.Package.version = values;
     } else {
       packageJson.Package.types.push({
-        members: values.split(',').map(v => v.trim()),
+        members: values.split(/[\s,]+/).filter(Boolean),
         name: key,
       });
     }
