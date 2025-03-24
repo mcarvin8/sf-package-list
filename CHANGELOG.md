@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/mcarvin8/sf-package-list/compare/v1.1.0...v1.2.0) (2025-03-24)
+
+
+### Features
+
+* add `no-api-version` flag ([1e5d7ab](https://github.com/mcarvin8/sf-package-list/commit/1e5d7abd6b23b4e8da642dbad2957dac8f1ba28c))
+
 ## [1.1.0](https://github.com/mcarvin8/sf-package-list/compare/v1.0.0...v1.1.0) (2025-03-19)
 
 
