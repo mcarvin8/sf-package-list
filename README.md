@@ -125,6 +125,12 @@ EXAMPLES
 
 <!-- commandsstop -->
 
+If the provided `package.xml` is invalid or empty (no `<types>`), the plugin will print a warning:
+
+```
+The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.
+```
+
 ### `sf sfpl xml`
 
 Convert a package list back into a Salesforce package.xml.
@@ -154,6 +160,12 @@ EXAMPLES
 ```
 
 <!-- commandsstop -->
+
+If the provided package list contains invalid lines (i.e. a line missing a colon `:`), the plugin will print a warning for each invalid line and skip the line:
+
+```
+Line does not match expected package list format and will be skipped: ${line}
+```
 
 ## Use Case
 

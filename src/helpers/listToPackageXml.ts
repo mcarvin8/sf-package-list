@@ -2,9 +2,13 @@ import { readFile } from 'node:fs/promises';
 import { PackageManifestObject } from '@salesforce/source-deploy-retrieve';
 import { XMLBuilder } from 'fast-xml-parser';
 
-export async function listToPackageXml(list: string, noApiVersion: boolean): Promise<string> {
+export async function listToPackageXml(
+  list: string,
+  noApiVersion: boolean
+): Promise<{ xmlString: string; warnings: string[] }> {
   // Read the content of the file
   const listString = await readFile(list, 'utf-8');
+  const warnings: string[] = [];
 
   // Split the file content by newlines
   const lines = listString.split('\n');
@@ -19,6 +23,7 @@ export async function listToPackageXml(list: string, noApiVersion: boolean): Pro
     // Ensure that line contains a ':'
     const parts = trimmedLine.split(':');
     if (parts.length < 2) {
+      warnings.push(`Line does not match expected package list format and will be skipped: ${line}`);
       continue; // Skip invalid lines
     }
 
@@ -47,5 +52,6 @@ export async function listToPackageXml(list: string, noApiVersion: boolean): Pro
   xmlString = xmlString.replace(/(\s*)<\/Package>/, '\n</Package>');
 
   const xmlHeader = '<?xml version="1.0" encoding="UTF-8"?>\n';
-  return xmlHeader + xmlString;
+  xmlString = xmlHeader + xmlString;
+  return { xmlString, warnings };
 }

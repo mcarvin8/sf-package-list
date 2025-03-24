@@ -1,14 +1,21 @@
 import { ManifestResolver } from '@salesforce/source-deploy-retrieve';
 
-export async function packageXmlToList(filePath: string, noApiVersion: boolean): Promise<string> {
+export async function packageXmlToList(
+  filePath: string,
+  noApiVersion: boolean
+): Promise<{ packageList: string; warnings: string[] }> {
   const resolver = new ManifestResolver();
   let packageList = '';
   let apiVersion = '';
+  const warnings: string[] = [];
 
   const resolvedManifest = await resolver.resolve(filePath);
 
   if (!resolvedManifest || resolvedManifest.components.length === 0) {
-    return packageList;
+    warnings.push(
+      'The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.'
+    );
+    return { packageList, warnings };
   }
 
   // Extract API version if noApiVersion is false
@@ -35,5 +42,5 @@ export async function packageXmlToList(filePath: string, noApiVersion: boolean):
     packageList += `\nVersion: ${apiVersion}`;
   }
 
-  return packageList;
+  return { packageList, warnings };
 }
