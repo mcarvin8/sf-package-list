@@ -1,6 +1,6 @@
 import { ManifestResolver } from '@salesforce/source-deploy-retrieve';
 
-export async function packageXmlToList(filePath: string): Promise<string> {
+export async function packageXmlToList(filePath: string, noApiVersion: boolean): Promise<string> {
   const resolver = new ManifestResolver();
   let packageList = '';
   let apiVersion = '';
@@ -11,8 +11,8 @@ export async function packageXmlToList(filePath: string): Promise<string> {
     return packageList;
   }
 
-  // Extract API version
-  if (resolvedManifest.apiVersion) {
+  // Extract API version if noApiVersion is false
+  if (resolvedManifest.apiVersion && !noApiVersion) {
     apiVersion = resolvedManifest.apiVersion;
   }
 
@@ -34,7 +34,6 @@ export async function packageXmlToList(filePath: string): Promise<string> {
   if (apiVersion) {
     packageList += `\nVersion: ${apiVersion}`;
   }
-  
 
   return packageList;
 }

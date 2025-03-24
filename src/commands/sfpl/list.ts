@@ -21,13 +21,19 @@ export default class SfplList extends SfCommand<SfPackageListResult> {
       summary: messages.getMessage('flags.package-xml.summary'),
       char: 'x',
       exists: true,
-      required: true
+      required: true,
     }),
     'package-list': Flags.file({
       summary: messages.getMessage('flags.package-list.summary'),
       char: 'l',
       exists: false,
-      default: 'package.txt'
+      default: 'package.txt',
+    }),
+    'no-api-version': Flags.boolean({
+      summary: messages.getMessage('flags.no-api-version.summary'),
+      char: 'n',
+      required: false,
+      default: false,
     }),
   };
 
@@ -36,8 +42,9 @@ export default class SfplList extends SfCommand<SfPackageListResult> {
 
     const packageXml = flags['package-xml'];
     const packageList = flags['package-list'];
+    const noApiVersion = flags['no-api-version'];
 
-    const listResult = await packageXmlToList(packageXml);
+    const listResult = await packageXmlToList(packageXml, noApiVersion);
     this.log(listResult);
     await writeFile(packageList, listResult);
     return { list: listResult };
