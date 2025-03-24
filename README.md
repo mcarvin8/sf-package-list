@@ -27,7 +27,7 @@ sf plugins install sf-package-list@x.y.z
 
 ## Example
 
-**Package.xml**
+**`package.xml`**
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -100,11 +100,14 @@ Convert a Salesforce package.xml into list format.
 
 ```
 USAGE
-  $ sf sfpl list [-x <value>] [-l <value>] [--json]
+  $ sf sfpl list [-x <value>] [-l <value>] [-n] [--json]
 
 FLAGS
   -x, --package-xml=<value>     Path to the package.xml to convert to list format.
   -l, --package-list=<value>    Output path to save the package list to.
+                                [default: 'package.txt']
+  -n, --no-api-version          Intentionally omit the API version in the package list.
+                                [default: false]
 
 
 GLOBAL FLAGS
@@ -114,6 +117,10 @@ EXAMPLES
   Convert package.xml into list format in a text file.
 
     $ sf sfpl list -x package.xml -l package.txt
+
+  Convert package.xml into list format in a text file, excluding the API version.
+
+    $ sf sfpl list -x package.xml -l package.txt -n
 ```
 
 <!-- commandsstop -->
@@ -124,11 +131,14 @@ Convert a package list back into a Salesforce package.xml.
 
 ```
 USAGE
-  $ sf sfpl xml [-x <value>] [-l <value>] [--json]
+  $ sf sfpl xml [-x <value>] [-l <value>] [-n] [--json]
 
 FLAGS
   -l, --package-list=<value>    Text file containing the package list to convert into an XML.
   -x, --package-xml=<value>     Path to the package.xml to create.
+                                [default: 'package.xml']
+  -n, --no-api-version          Intentionally omit the API version in the package.xml.
+                                [default: false]
 
 GLOBAL FLAGS
   --json  Format output as json.
@@ -137,6 +147,10 @@ EXAMPLES
   Convert the list file back into a Salesforce package.xml
 
     $ sf sfpl xml -x package.xml -l package.txt
+
+  Convert the list file back into a Salesforce package.xml, excluding the API version
+
+    $ sf sfpl xml -x package.xml -l package.txt -n
 ```
 
 <!-- commandsstop -->
