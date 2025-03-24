@@ -39,13 +39,21 @@ export default class SfplXml extends SfCommand<SfPackageXmlResult> {
 
   public async run(): Promise<SfPackageXmlResult> {
     const { flags } = await this.parse(SfplXml);
+    let warnings: string[] = [];
 
     const packageXml = flags['package-xml'];
     const packageList = flags['package-list'];
     const noApiVersion = flags['no-api-version'];
 
     const xmlResult = await listToPackageXml(packageList, noApiVersion);
-    await writeFile(packageXml, xmlResult);
+    await writeFile(packageXml, xmlResult.xmlString);
+    warnings = xmlResult.warnings;
+    // Print warnings if any
+    if (warnings.length > 0) {
+      warnings.forEach((warning) => {
+        this.warn(warning);
+      });
+    }
     this.log(`The package XML has been written to ${packageXml}`);
     return { path: packageXml };
   }

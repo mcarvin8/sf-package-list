@@ -39,14 +39,22 @@ export default class SfplList extends SfCommand<SfPackageListResult> {
 
   public async run(): Promise<SfPackageListResult> {
     const { flags } = await this.parse(SfplList);
+    let warnings: string[] = [];
 
     const packageXml = flags['package-xml'];
     const packageList = flags['package-list'];
     const noApiVersion = flags['no-api-version'];
 
     const listResult = await packageXmlToList(packageXml, noApiVersion);
-    this.log(listResult);
-    await writeFile(packageList, listResult);
-    return { list: listResult };
+    warnings = listResult.warnings;
+    // Print warnings if any
+    if (warnings.length > 0) {
+      warnings.forEach((warning) => {
+        this.warn(warning);
+      });
+    }
+    this.log(listResult.packageList);
+    await writeFile(packageList, listResult.packageList);
+    return { list: listResult.packageList };
   }
 }

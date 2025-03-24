@@ -19,7 +19,8 @@ describe('sfpc combine', () => {
   const package3 = resolve('test/samples/package3.xml');
   const list3 = resolve('test/samples/list3.txt');
   const outputXml = resolve('package.xml');
-  const invalidPackage1 = resolve('test/samples/invalid1.xml');
+  const invalidPackage = resolve('test/samples/invalid.xml');
+  const invalidList = resolve('test/samples/invalid.txt');
 
   beforeEach(() => {
     sfCommandStubs = stubSfCommandUx($$.SANDBOX);
@@ -110,12 +111,34 @@ describe('sfpc combine', () => {
     expect(output.trim()).to.equal('The package XML has been written to package.xml');
     strictEqual(actualOutput, expectedOutput, `Mismatch between ${package3} and ${outputXml}`);
   });
-  it('test the invalid packages.', async () => {
-    await SfplList.run(['-x', invalidPackage1]);
+  it('confirm the invalid package provides a warning.', async () => {
+    await SfplList.run(['-x', invalidPackage]);
     const output = sfCommandStubs.log
       .getCalls()
       .flatMap((c) => c.args)
       .join('\n');
     expect(output).to.include('');
+    const warnings = sfCommandStubs.warn
+      .getCalls()
+      .flatMap((c) => c.args)
+      .join('\n');
+    expect(warnings).to.include(
+      'The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.'
+    );
+  });
+  it('confirm the invalid list provides a warning.', async () => {
+    await SfplXml.run(['-l', invalidList]);
+    const output = sfCommandStubs.log
+      .getCalls()
+      .flatMap((c) => c.args)
+      .join('\n');
+    expect(output).to.include('');
+    const warnings = sfCommandStubs.warn
+      .getCalls()
+      .flatMap((c) => c.args)
+      .join('\n');
+    expect(warnings).to.include(
+      'Line does not match expected package list format and will be skipped: ApexClass PrepareMySandbox'
+    );
   });
 });
