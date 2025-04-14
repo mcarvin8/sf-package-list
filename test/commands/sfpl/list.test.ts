@@ -122,9 +122,7 @@ describe('sfpc combine', () => {
       .getCalls()
       .flatMap((c) => c.args)
       .join('\n');
-    expect(warnings).to.include(
-      'The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.'
-    );
+    expect(warnings).to.include('The provided package is invalid or has no components. Creating empty list file.');
   });
   it('confirm the invalid list provides a warning.', async () => {
     await SfplXml.run(['-l', invalidList]);

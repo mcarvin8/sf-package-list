@@ -26,8 +26,8 @@ export default class SfplXml extends SfCommand<SfPackageXmlResult> {
     'package-list': Flags.file({
       summary: messages.getMessage('flags.package-list.summary'),
       char: 'l',
-      exists: true,
-      required: true,
+      exists: false,
+      required: false,
     }),
     'no-api-version': Flags.boolean({
       summary: messages.getMessage('flags.no-api-version.summary'),

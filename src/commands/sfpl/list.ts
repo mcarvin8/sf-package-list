@@ -20,8 +20,8 @@ export default class SfplList extends SfCommand<SfPackageListResult> {
     'package-xml': Flags.file({
       summary: messages.getMessage('flags.package-xml.summary'),
       char: 'x',
-      exists: true,
-      required: true,
+      exists: false,
+      required: false,
     }),
     'package-list': Flags.file({
       summary: messages.getMessage('flags.package-list.summary'),
