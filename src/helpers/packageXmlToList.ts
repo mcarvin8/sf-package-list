@@ -1,7 +1,7 @@
 import { ManifestResolver } from '@salesforce/source-deploy-retrieve';
 
 export async function packageXmlToList(
-  filePath: string,
+  filePath: string | undefined,
   noApiVersion: boolean
 ): Promise<{ packageList: string; warnings: string[] }> {
   const resolver = new ManifestResolver();
@@ -9,12 +9,15 @@ export async function packageXmlToList(
   let apiVersion = '';
   const warnings: string[] = [];
 
+  if (!filePath) {
+    warnings.push('No package.xml file path was provided. Creating empty list file.');
+    return { packageList, warnings };
+  }
+
   const resolvedManifest = await resolver.resolve(filePath);
 
   if (!resolvedManifest || resolvedManifest.components.length === 0) {
-    warnings.push(
-      'The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.'
-    );
+    warnings.push('The provided package is invalid or has no components. Creating empty list file.');
     return { packageList, warnings };
   }
 
