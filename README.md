@@ -64,7 +64,7 @@ sf plugins install sf-package-list@x.y.z
 
 **Package List**
 
-> Multiple metadata members can be separated by commas or spaces.
+> Multiple metadata members must be separated by a comma.
 
 ```
 CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold

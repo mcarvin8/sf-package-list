@@ -26,5 +26,9 @@
         <members>Cadillac_Eldorado</members>
         <name>StandardValueSet</name>
     </types>
+    <types>
+        <members>Connector__c-Connector Layout V4</members>
+        <name>Layout</name>
+    </types>
     <version>59.0</version>
 </Package>

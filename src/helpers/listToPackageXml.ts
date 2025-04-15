@@ -37,6 +37,7 @@ function parseListLines(lines: string[], noApiVersion: boolean, warnings: string
     }
 
     const [key, values] = parts.map((s) => s.trim());
+
     if (key.toLowerCase() === 'version') {
       if (!noApiVersion) {
         packageJson.Package.version = values;
@@ -45,7 +46,10 @@ function parseListLines(lines: string[], noApiVersion: boolean, warnings: string
     }
 
     packageJson.Package.types.push({
-      members: values.split(/[\s,]+/).filter(Boolean),
+      members: values
+        .split(',')
+        .map((s) => s.trim())
+        .filter(Boolean),
       name: key,
     });
   }
