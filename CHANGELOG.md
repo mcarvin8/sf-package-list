@@ -5,6 +5,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.4](https://github.com/mcarvin8/sf-package-list/compare/v1.2.3...v1.2.4) (2025-04-15)
+
+
+### Bug Fixes
+
+* only allow commas to separate members in list ([87444dd](https://github.com/mcarvin8/sf-package-list/commit/87444ddd8bafee6490c48d5cb75099ed7288f510))
+* only allow commas to separate members in list ([c27f7b8](https://github.com/mcarvin8/sf-package-list/commit/c27f7b80134d0e393b05fb328e5cabd9b6f2d87b))
+
 ## [1.2.3](https://github.com/mcarvin8/sf-package-list/compare/v1.2.2...v1.2.3) (2025-04-14)
 
 
