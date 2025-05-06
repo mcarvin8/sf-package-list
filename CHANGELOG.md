@@ -5,6 +5,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.5](https://github.com/mcarvin8/sf-package-list/compare/v1.2.4...v1.2.5) (2025-05-06)
+
+
+### Bug Fixes
+
+* **deps:** bump @salesforce/sf-plugins-core from 12.2.0 to 12.2.1 ([ca19282](https://github.com/mcarvin8/sf-package-list/commit/ca192823c106812261c0a3f51010839a09c5de17))
+* **deps:** bump @salesforce/source-deploy-retrieve ([392b76c](https://github.com/mcarvin8/sf-package-list/commit/392b76c2f578c35a0394ed5eafeedf834d94218f))
+
 ## [1.2.4](https://github.com/mcarvin8/sf-package-list/compare/v1.2.3...v1.2.4) (2025-04-15)
 
 
