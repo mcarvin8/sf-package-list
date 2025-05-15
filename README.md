@@ -1,23 +1,31 @@
 # `sf-package-list`
 
-[![NPM](https://img.shields.io/npm/v/sf-package-list.svg?label=sf-package-list)](https://www.npmjs.com/package/sf-package-list) [![Downloads/week](https://img.shields.io/npm/dw/sf-package-list.svg)](https://npmjs.org/package/sf-package-list) [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://raw.githubusercontent.com/mcarvin8/sf-package-list/refs/heads/main/LICENSE.md)
+[![NPM](https://img.shields.io/npm/v/sf-package-list.svg?label=sf-package-list)](https://www.npmjs.com/package/sf-package-list)
+[![Downloads/week](https://img.shields.io/npm/dw/sf-package-list.svg)](https://npmjs.org/package/sf-package-list)
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://raw.githubusercontent.com/mcarvin8/sf-package-list/main/LICENSE.md)
 
-<!-- TABLE OF CONTENTS -->
+A Salesforce CLI plugin that helps you convert `package.xml` files to a simple, human-readable list format—and back again.
+
+This makes working with metadata easier for admins and developers, especially in version control systems, automation pipelines, or anywhere you want to quickly review or edit what’s being deployed.
+
+---
+
 <details>
   <summary>Table of Contents</summary>
 
 - [Install](#install)
-- [Example](#example)
-- [Why?](#why)
+- [What It Does](#what-it-does)
+- [Why Use It?](#why-use-it)
+- [Examples](#examples)
 - [Commands](#commands)
-  - [`sf-sfpl-list`](#sf-sfpl-list)
-  - [`sf-sfpl-xml`](#sf-sfpl-xml)
-- [Use Case](#use-case)
+  - [`sf sfpl list`](#sf-sfpl-list)
+  - [`sf sfpl xml`](#sf-sfpl-xml)
+- [Real-World Use Case](#real-world-use-case)
 - [Issues](#issues)
 - [License](#license)
 </details>
 
-Convert Salesforce manifest files (`package.xml`) into list format and reverse the process when needed.
+---
 
 ## Install
 
@@ -25,9 +33,34 @@ Convert Salesforce manifest files (`package.xml`) into list format and reverse t
 sf plugins install sf-package-list@x.y.z
 ```
 
-## Example
+---
 
-**`package.xml`**
+## What It Does
+
+This plugin lets you:
+
+- Convert a Salesforce `package.xml` to a cleaner, flat **package list**
+- Convert a **package list** back into a valid `package.xml`
+
+Both directions are supported so you can go back and forth easily.
+
+---
+
+## Why Use It?
+
+Salesforce `package.xml` files can be verbose and tricky to edit manually. This tool simplifies that by providing a flat list format that’s:
+
+- **Easy to Read** – You can quickly scan and understand what metadata is included.
+- **Easy to Edit** – Add, remove, or change metadata items without worrying about XML syntax.
+- **Git-Friendly** – Cleaner diffs and fewer merge conflicts.
+- **Script-Friendly** – Perfect for CI/CD and automation pipelines.
+- **Admin-Friendly** – No XML knowledge required to contribute to or understand metadata lists.
+
+---
+
+## Examples
+
+### Original `package.xml`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -62,9 +95,7 @@ sf plugins install sf-package-list@x.y.z
 </Package>
 ```
 
-**Package List**
-
-> Multiple metadata members must be separated by a comma.
+### Converted to Package List Format
 
 ```
 CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold
@@ -75,108 +106,92 @@ StandardValueSet: Glengarry_Leads, Cadillac_Eldorado
 Version: 59.0
 ```
 
-## Why?
-
-The package list format offers several benefits for Salesforce admins and developers:
-
-- **Readability** – The format is much simpler and easier to scan compared to XML, making it quicker to understand which metadata is being deployed or destroyed.
-- **Ease of Editing** – Users can easily add, remove, or modify metadata items without worrying about XML syntax or structure.
-- **Version Control Friendly** – The format reduces unnecessary diffs in Git since there's no XML nesting, indentation, or attributes that could change subtly.
-- **Better for Scripting** – It integrates well with automation scripts, as it's easier to parse with simple text-processing tools compared to XML.
-- **Faster Declaration** – Users can quickly list metadata items without dealing with XML formatting, leading to a more efficient workflow.
-
-It's a way to streamline deployments and make metadata management more accessible.
+---
 
 ## Commands
 
-<!-- commands -->
-
-- [`sf sfpl list`](#sf-sfpl-list)
-- [`sf sfpl xml`](#sf-sfpl-xml)
-
 ### `sf sfpl list`
 
-Convert a Salesforce package.xml into list format.
+Convert a `package.xml` to a flat list format.
 
 ```
 USAGE
   $ sf sfpl list [-x <value>] [-l <value>] [-n] [--json]
 
 FLAGS
-  -x, --package-xml=<value>     Path to the package.xml to convert to list format.
-  -l, --package-list=<value>    Output path to save the package list to.
-                                [default: 'package.txt']
-  -n, --no-api-version          Intentionally omit the API version in the package list.
-                                [default: false]
-
+  -x, --package-xml=<value>     Path to the package.xml to convert.
+  -l, --package-list=<value>    Where to save the converted list. [default: package.txt]
+  -n, --no-api-version          Exclude API version from the output. [default: false]
 
 GLOBAL FLAGS
-  --json  Format output as json.
+  --json                        Format output as JSON.
 
 EXAMPLES
-  Convert package.xml into list format in a text file.
 
-    $ sf sfpl list -x package.xml -l package.txt
+  Convert and save list format:
+  $ sf sfpl list -x package.xml -l package.txt
 
-  Convert package.xml into list format in a text file, excluding the API version.
-
-    $ sf sfpl list -x package.xml -l package.txt -n
+  Convert and exclude API version:
+  $ sf sfpl list -x package.xml -l package.txt -n
 ```
 
-<!-- commandsstop -->
-
-If the provided `package.xml` is invalid or empty (no `<types>`), the plugin will print a warning:
+If the provided `package.xml` is invalid or has no components, you’ll see:
 
 ```
 The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.
 ```
 
+---
+
 ### `sf sfpl xml`
 
-Convert a package list back into a Salesforce package.xml.
+Convert a package list back into a `package.xml`.
 
 ```
 USAGE
   $ sf sfpl xml [-x <value>] [-l <value>] [-n] [--json]
 
 FLAGS
-  -l, --package-list=<value>    Text file containing the package list to convert into an XML.
-  -x, --package-xml=<value>     Path to the package.xml to create.
-                                [default: 'package.xml']
-  -n, --no-api-version          Intentionally omit the API version in the package.xml.
-                                [default: false]
+  -l, --package-list=<value>    Path to the package list file.
+  -x, --package-xml=<value>     Where to save the generated package.xml. [default: package.xml]
+  -n, --no-api-version          Exclude API version from the generated XML. [default: false]
 
 GLOBAL FLAGS
-  --json  Format output as json.
+  --json                        Format output as JSON.
 
 EXAMPLES
-  Convert the list file back into a Salesforce package.xml
 
-    $ sf sfpl xml -x package.xml -l package.txt
+  Convert list to package.xml:
+  $ sf sfpl xml -x package.xml -l package.txt
 
-  Convert the list file back into a Salesforce package.xml, excluding the API version
-
-    $ sf sfpl xml -x package.xml -l package.txt -n
+  Convert list to package.xml without API version:
+  $ sf sfpl xml -x package.xml -l package.txt -n
 ```
 
-<!-- commandsstop -->
-
-If the provided package list contains invalid lines (i.e. a line missing a colon `:`), the plugin will print a warning for each invalid line and skip the line:
+Invalid lines in the list will be skipped with a warning like:
 
 ```
 Line does not match expected package list format and will be skipped: ${line}
 ```
 
-## Use Case
+---
 
-In my use case, we use `sfdx-git-delta` to create incremental packages via the git diff, but we also allow the developers to declare additional metadata to deploy via the GitLab merge request description/commit message. Instead of requiring developers to copy and paste a `package.xml` into the description, which may cause errors if XML formatting is off, we use this package list format to provide a simpler way to declare metadata without needing to conform to the XML schema.
+## Real-World Use Case
 
-We also use this package list format to run destructive deployments from a GitLab web-based pipeline (created by using the "Run pipeline" button in the GitLab UI). The user provides the package list as the job-specific CI/CD variable and the plugin converts this list into the `destructiveChanges.xml`.
+We use this plugin alongside `sfdx-git-delta` to build deployment packages from git diffs. But we also let developers specify extra metadata via GitLab merge request descriptions or commit messages.
+
+Instead of copying and pasting a `package.xml` (which is error-prone), they can just list the metadata in this simple format. It’s faster, cleaner, and works well with automation.
+
+We also use this format to support destructive deployments triggered from GitLab’s web UI. Users can input a package list into a form field (CI/CD variable), and this plugin turns it into a `destructiveChanges.xml`.
+
+---
 
 ## Issues
 
-If you encounter any issues or would like to suggest features, please create an [issue](https://github.com/mcarvin8/sf-package-list/issues).
+Found a bug or have an idea? [Open an issue](https://github.com/mcarvin8/sf-package-list/issues).
+
+---
 
 ## License
 
-This project is licensed under the MIT license. Please see the [LICENSE](https://raw.githubusercontent.com/mcarvin8/sf-package-list/main/LICENSE.md) file for details.
+This project is licensed under the [MIT License](https://raw.githubusercontent.com/mcarvin8/sf-package-list/main/LICENSE.md).
