@@ -60,7 +60,7 @@ Salesforce `package.xml` files can be verbose and tricky to edit manually. This 
 
 ## Examples
 
-### Original `package.xml`
+### `package.xml`
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -95,7 +95,7 @@ Salesforce `package.xml` files can be verbose and tricky to edit manually. This 
 </Package>
 ```
 
-### Converted to Package List Format
+### Package List
 
 ```
 CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold
