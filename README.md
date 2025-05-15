@@ -20,7 +20,7 @@ This makes working with metadata easier for admins and developers, especially in
 - [Commands](#commands)
   - [`sf sfpl list`](#sf-sfpl-list)
   - [`sf sfpl xml`](#sf-sfpl-xml)
-- [Real-World Use Case](#real-world-use-case)
+- [Use Case](#use-case)
 - [Issues](#issues)
 - [License](#license)
 </details>
@@ -176,7 +176,7 @@ Line does not match expected package list format and will be skipped: ${line}
 
 ---
 
-## Real-World Use Case
+## Use Case
 
 We use this plugin alongside `sfdx-git-delta` to build deployment packages from git diffs. But we also let developers specify extra metadata via GitLab merge request descriptions or commit messages.
 
