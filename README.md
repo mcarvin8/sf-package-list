@@ -8,7 +8,7 @@
 
 - [Install](#install)
 - [Example](#example)
-- [Why](#why)
+- [Why?](#why)
 - [Commands](#commands)
   - [`sf-sfpl-list`](#sf-sfpl-list)
   - [`sf-sfpl-xml`](#sf-sfpl-xml)
@@ -75,7 +75,7 @@ StandardValueSet: Glengarry_Leads, Cadillac_Eldorado
 Version: 59.0
 ```
 
-## Why
+## Why?
 
 The package list format offers several benefits for Salesforce admins and developers:
 
