@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.6](https://github.com/mcarvin8/sf-package-list/compare/v1.2.5...v1.2.6) (2025-05-26)
+
+
+### Bug Fixes
+
+* use component set to build package list ([#24](https://github.com/mcarvin8/sf-package-list/issues/24)) ([bba031b](https://github.com/mcarvin8/sf-package-list/commit/bba031b89716db830a1018d0a00ae19e080c9531))
+
 ## [1.2.5](https://github.com/mcarvin8/sf-package-list/compare/v1.2.4...v1.2.5) (2025-05-06)
 
 
