@@ -14,8 +14,6 @@ export async function packageXmlToList(
   let componentSet: ComponentSet;
   try {
     componentSet = await ComponentSet.fromManifest({ manifestPath: filePath });
-    // eslint-disable-next-line no-console
-    console.log(componentSet);
   } catch (err) {
     warnings.push('The provided package is invalid or has no components. Creating empty list file.');
     return { packageList: '', warnings };

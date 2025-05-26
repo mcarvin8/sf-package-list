@@ -2,7 +2,7 @@ import { writeFile } from 'node:fs/promises';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
 
-import { listToPackageXml } from '../../helpers/listToPackageXml.js';
+import { listToPackageXml } from '../../core/listToPackageXml.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('sf-package-list', 'sfpl.xml');
