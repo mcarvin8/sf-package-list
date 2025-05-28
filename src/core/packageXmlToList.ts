@@ -1,31 +1,38 @@
+import { writeFile } from 'node:fs/promises';
 import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 export async function packageXmlToList(
-  filePath: string | undefined,
+  xmlPath: string | undefined,
+  listPath: string,
   noApiVersion: boolean
 ): Promise<{ packageList: string; warnings: string[] }> {
   const warnings: string[] = [];
+  let packageList: string;
 
-  if (!filePath) {
+  if (!xmlPath) {
     warnings.push('No package.xml file path was provided. Creating empty list file.');
-    return { packageList: '', warnings };
   }
 
-  let componentSet: ComponentSet;
-  try {
-    componentSet = await ComponentSet.fromManifest({ manifestPath: filePath });
-  } catch (err) {
-    warnings.push('The provided package is invalid or has no components. Creating empty list file.');
-    return { packageList: '', warnings };
-  }
+  if (xmlPath) {
+    let componentSet: ComponentSet;
+    try {
+      componentSet = await ComponentSet.fromManifest({ manifestPath: xmlPath });
+    } catch (err) {
+      warnings.push('The provided package is invalid or has no components. Creating empty list file.');
+      return { packageList: '', warnings };
+    }
 
-  const metadataTypes = groupComponentsByType(componentSet);
-  if (metadataTypes.size === 0) {
-    warnings.push('The provided package is invalid or has no components. Creating empty list file.');
-    return { packageList: '', warnings };
-  }
+    const metadataTypes = groupComponentsByType(componentSet);
+    if (metadataTypes.size === 0) {
+      warnings.push('The provided package is invalid or has no components. Creating empty list file.');
+      return { packageList: '', warnings };
+    }
 
-  const packageList = buildPackageList(metadataTypes, componentSet.sourceApiVersion, noApiVersion);
+    packageList = buildPackageList(metadataTypes, componentSet.sourceApiVersion, noApiVersion);
+  } else {
+    packageList = '';
+  }
+  await writeFile(listPath, packageList);
   return { packageList, warnings };
 }
 

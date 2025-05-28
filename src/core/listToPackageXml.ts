@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { PackageManifestObject } from '@salesforce/source-deploy-retrieve';
 import { XMLBuilder } from 'fast-xml-parser';
 
@@ -58,34 +58,40 @@ function parseListLines(lines: string[], noApiVersion: boolean, warnings: string
 }
 
 export async function listToPackageXml(
-  list: string | undefined,
+  listPath: string | undefined,
+  xmlPath: string,
   noApiVersion: boolean
-): Promise<{ xmlString: string; warnings: string[] }> {
+): Promise<string[]> {
   const warnings: string[] = [];
   let listString: string | undefined;
+  let xmlString;
 
-  if (list) {
+  if (listPath) {
     try {
-      listString = await readFile(list, 'utf-8');
+      listString = await readFile(listPath, 'utf-8');
     } catch {
-      warnings.push(`List file "${list}" could not be read. Using empty package.xml.`);
+      warnings.push(`List file "${listPath}" could not be read. Using empty package.xml.`);
     }
   } else {
     warnings.push('No list file provided. Using empty package.xml.');
   }
 
-  if (!listString) {
-    return { xmlString: generateEmptyPackageXml(), warnings };
+  if (listString) {
+    const lines = listString.split('\n');
+    const packageJson = parseListLines(lines, noApiVersion, warnings);
+
+    const builder = new XMLBuilder({ format: true, ignoreAttributes: false, indentBy: '    ' });
+    xmlString = builder.build(packageJson) as string;
+
+    xmlString = xmlString.replace(/\s*<version>0\.0<\/version>\s*/g, '');
+    xmlString = xmlString.replace(/(\s*)<\/Package>/, '\n</Package>');
+    // final string
+    xmlString = '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlString;
+  } else {
+    xmlString = generateEmptyPackageXml();
   }
 
-  const lines = listString.split('\n');
-  const packageJson = parseListLines(lines, noApiVersion, warnings);
+  await writeFile(xmlPath, xmlString);
 
-  const builder = new XMLBuilder({ format: true, ignoreAttributes: false, indentBy: '    ' });
-  let xmlString = builder.build(packageJson) as string;
-
-  xmlString = xmlString.replace(/\s*<version>0\.0<\/version>\s*/g, '');
-  xmlString = xmlString.replace(/(\s*)<\/Package>/, '\n</Package>');
-
-  return { xmlString: '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlString, warnings };
+  return warnings;
 }
