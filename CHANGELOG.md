@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.7](https://github.com/mcarvin8/sf-package-list/compare/v1.2.6...v1.2.7) (2025-05-28)
+
+
+### Bug Fixes
+
+* move writeFile to functions ([0b3fd95](https://github.com/mcarvin8/sf-package-list/commit/0b3fd95ea10fb719641fdd9d064cb3efb41a55a0))
+
 ## [1.2.6](https://github.com/mcarvin8/sf-package-list/compare/v1.2.5...v1.2.6) (2025-05-26)
 
 
