@@ -11,16 +11,16 @@ import SfplXml from '../../../src/commands/sfpl/xml.js';
 describe('sfpc combine', () => {
   const $$ = new TestContext();
   let sfCommandStubs: ReturnType<typeof stubSfCommandUx>;
-  const package1 = resolve('test/samples/package1.xml');
-  const list1 = resolve('test/samples/list1.txt');
-  const package2 = resolve('test/samples/package2.xml');
-  const package2NoApi = resolve('test/samples/package2_no_version.xml');
-  const list2 = resolve('test/samples/list2.txt');
-  const package3 = resolve('test/samples/package3.xml');
-  const list3 = resolve('test/samples/list3.txt');
+  const package1 = resolve('samples/package1.xml');
+  const list1 = resolve('samples/list1.txt');
+  const package2 = resolve('samples/package2.xml');
+  const package2NoApi = resolve('samples/package2_no_version.xml');
+  const list2 = resolve('samples/list2.txt');
+  const package3 = resolve('samples/package3.xml');
+  const list3 = resolve('samples/list3.txt');
   const outputXml = resolve('package.xml');
-  const invalidPackage = resolve('test/samples/invalid.xml');
-  const invalidList = resolve('test/samples/invalid.txt');
+  const invalidPackage = resolve('samples/invalid.xml');
+  const invalidList = resolve('samples/invalid.txt');
 
   beforeEach(() => {
     sfCommandStubs = stubSfCommandUx($$.SANDBOX);

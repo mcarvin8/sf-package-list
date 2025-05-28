@@ -1,4 +1,3 @@
-import { writeFile } from 'node:fs/promises';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
 
@@ -45,7 +44,7 @@ export default class SfplList extends SfCommand<SfPackageListResult> {
     const packageList = flags['package-list'];
     const noApiVersion = flags['no-api-version'];
 
-    const listResult = await packageXmlToList(packageXml, noApiVersion);
+    const listResult = await packageXmlToList(packageXml, packageList, noApiVersion);
     warnings = listResult.warnings;
     // Print warnings if any
     if (warnings.length > 0) {
@@ -54,7 +53,6 @@ export default class SfplList extends SfCommand<SfPackageListResult> {
       });
     }
     this.log(listResult.packageList);
-    await writeFile(packageList, listResult.packageList);
     return { list: listResult.packageList };
   }
 }

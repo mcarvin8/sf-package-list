@@ -1,4 +1,3 @@
-import { writeFile } from 'node:fs/promises';
 import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
 
@@ -39,15 +38,12 @@ export default class SfplXml extends SfCommand<SfPackageXmlResult> {
 
   public async run(): Promise<SfPackageXmlResult> {
     const { flags } = await this.parse(SfplXml);
-    let warnings: string[] = [];
 
     const packageXml = flags['package-xml'];
     const packageList = flags['package-list'];
     const noApiVersion = flags['no-api-version'];
 
-    const xmlResult = await listToPackageXml(packageList, noApiVersion);
-    await writeFile(packageXml, xmlResult.xmlString);
-    warnings = xmlResult.warnings;
+    const warnings = await listToPackageXml(packageList, packageXml, noApiVersion);
     // Print warnings if any
     if (warnings.length > 0) {
       warnings.forEach((warning) => {
