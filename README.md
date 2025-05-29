@@ -4,6 +4,7 @@
 [![Downloads/week](https://img.shields.io/npm/dw/sf-package-list.svg)](https://npmjs.org/package/sf-package-list)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://raw.githubusercontent.com/mcarvin8/sf-package-list/main/LICENSE.md)
 [![Maintainability](https://qlty.sh/badges/3f1779cc-038e-48f0-b693-52f72e106d67/maintainability.svg)](https://qlty.sh/gh/mcarvin8/projects/sf-package-list)
+[![Known Vulnerabilities](https://snyk.io//test/github/mcarvin8/sf-package-list/badge.svg?targetFile=package.json)](https://snyk.io//test/github/mcarvin8/sf-package-list?targetFile=package.json)
 
 A Salesforce CLI plugin that helps you convert `package.xml` files to a simple, human-readable list format—and back again.
 
