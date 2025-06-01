@@ -1,7 +1,7 @@
 {
   "name": "sf-package-list",
   "description": "Convert Salesforce manifest files (package.xml) into list format.",
-  "version": "1.2.7",
+  "version": "1.2.8",
   "dependencies": {
     "@oclif/core": "^4",
     "@salesforce/core": "^8",
