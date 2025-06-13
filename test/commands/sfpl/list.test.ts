@@ -1,16 +1,12 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { strictEqual } from 'node:assert';
+import { describe, it, expect } from '@jest/globals';
 
-import { TestContext } from '@salesforce/core/testSetup';
-import { expect } from 'chai';
-import { stubSfCommandUx } from '@salesforce/sf-plugins-core';
-import SfplList from '../../../src/commands/sfpl/list.js';
-import SfplXml from '../../../src/commands/sfpl/xml.js';
+import { listToPackageXml } from '../../../src/core/listToPackageXml.js';
+import { packageXmlToList } from '../../../src/core/packageXmlToList.js';
 
 describe('sfpc combine', () => {
-  const $$ = new TestContext();
-  let sfCommandStubs: ReturnType<typeof stubSfCommandUx>;
   const package1 = resolve('samples/package1.xml');
   const list1 = resolve('samples/list1.txt');
   const package2 = resolve('samples/package2.xml');
@@ -22,121 +18,172 @@ describe('sfpc combine', () => {
   const invalidPackage = resolve('samples/invalid.xml');
   const invalidList = resolve('samples/invalid.txt');
 
-  beforeEach(() => {
-    sfCommandStubs = stubSfCommandUx($$.SANDBOX);
-  });
-
-  afterEach(() => {
-    $$.restore();
-  });
-
   it('convert the package 1 into list format.', async () => {
-    await SfplList.run(['-x', package1]);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
-    const expectedOutput = 'CustomObject: ABC';
-    expect(output.trim()).to.equal(expectedOutput);
+    const { packageList, warnings } = await packageXmlToList({
+      xmlPath: package1,
+      listPath: 'package.txt',
+      noApiVersion: false,
+    });
+    expect(packageList.trim()).toEqual('CustomObject: ABC');
+    expect(warnings).toEqual([]);
   });
+
   it('convert the list 1 back into a XML.', async () => {
-    await SfplXml.run(['-l', list1]);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
+    const { warnings, xmlPath } = await listToPackageXml({ listPath: list1, xmlPath: outputXml, noApiVersion: false });
     const expectedOutput = await readFile(package1, 'utf-8');
-    const actualOutput = await readFile(outputXml, 'utf-8');
-    expect(output.trim()).to.equal('The package XML has been written to package.xml');
+    const actualOutput = await readFile(xmlPath, 'utf-8');
+    expect(warnings).toEqual([]);
     strictEqual(actualOutput, expectedOutput, `Mismatch between ${package1} and ${outputXml}`);
   });
-  it('convert the package 2 into list format, excluding the API version.', async () => {
-    await SfplList.run(['-x', package2, '-n']);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
-    const expectedOutput = 'StandardValueSet: Glengarry_Leadz';
-    expect(output.trim()).to.equal(expectedOutput);
+
+  it('convert the package 2 into list format, excluding API version.', async () => {
+    const { packageList, warnings } = await packageXmlToList({
+      xmlPath: package2,
+      listPath: 'package.txt',
+      noApiVersion: true,
+    });
+    expect(packageList.trim()).toEqual('StandardValueSet: Glengarry_Leadz');
+    expect(warnings).toEqual([]);
   });
-  it('convert the package 2 into list format.', async () => {
-    await SfplList.run(['-x', package2]);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
-    const expectedOutput = 'StandardValueSet: Glengarry_Leadz\nVersion: 59.0';
-    expect(output.trim()).to.equal(expectedOutput);
+
+  it('convert the package 2 into list format, including API version.', async () => {
+    const { packageList, warnings } = await packageXmlToList({
+      xmlPath: package2,
+      listPath: 'package.txt',
+      noApiVersion: false,
+    });
+    expect(packageList.trim()).toEqual('StandardValueSet: Glengarry_Leadz\nVersion: 59.0');
+    expect(warnings).toEqual([]);
   });
+
   it('convert the list 2 back into a XML.', async () => {
-    await SfplXml.run(['-l', list2]);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
+    const { warnings, xmlPath } = await listToPackageXml({ listPath: list2, xmlPath: outputXml, noApiVersion: false });
     const expectedOutput = await readFile(package2, 'utf-8');
-    const actualOutput = await readFile(outputXml, 'utf-8');
-    expect(output.trim()).to.equal('The package XML has been written to package.xml');
+    const actualOutput = await readFile(xmlPath, 'utf-8');
+    expect(warnings).toEqual([]);
     strictEqual(actualOutput, expectedOutput, `Mismatch between ${package2} and ${outputXml}`);
   });
+
   it('convert the list 2 back into a XML, excluding the API version.', async () => {
-    await SfplXml.run(['-l', list2, '-n']);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
+    const { warnings, xmlPath } = await listToPackageXml({ listPath: list2, xmlPath: outputXml, noApiVersion: true });
     const expectedOutput = await readFile(package2NoApi, 'utf-8');
-    const actualOutput = await readFile(outputXml, 'utf-8');
-    expect(output.trim()).to.equal('The package XML has been written to package.xml');
-    strictEqual(actualOutput, expectedOutput, `Mismatch between ${package2NoApi} and ${outputXml}`);
+    const actualOutput = await readFile(xmlPath, 'utf-8');
+    expect(warnings).toEqual([]);
+    strictEqual(actualOutput, expectedOutput, `Mismatch between ${package2} and ${outputXml}`);
   });
-  it('convert the package 3 into list format.', async () => {
-    await SfplList.run(['-x', package3]);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
+
+  it('convert the package 3 into list format, including API version.', async () => {
+    const { packageList, warnings } = await packageXmlToList({
+      xmlPath: package3,
+      listPath: 'package.txt',
+      noApiVersion: false,
+    });
     const expectedOutput =
       'CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold\nCustomObject: ABC, Glengarry, Mitch_And_Murray\nCustomField: Glengarry.Weak_Leadz__c, Coffee.is_Closer__c\nEmailTemplate: unfiled$public/Second_Prize_Set_of_Steak_Knives\nStandardValueSet: Glengarry_Leads, Cadillac_Eldorado\nLayout: Connector__c-Connector Layout V4\nVersion: 59.0';
-    expect(output.trim()).to.equal(expectedOutput);
+    expect(packageList.trim()).toEqual(expectedOutput);
+    expect(warnings).toEqual([]);
   });
+
   it('convert the list 3 back into a XML.', async () => {
-    await SfplXml.run(['-l', list3]);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
+    const { warnings, xmlPath } = await listToPackageXml({ listPath: list3, xmlPath: outputXml, noApiVersion: false });
     const expectedOutput = await readFile(package3, 'utf-8');
-    const actualOutput = await readFile(outputXml, 'utf-8');
-    expect(output.trim()).to.equal('The package XML has been written to package.xml');
+    const actualOutput = await readFile(xmlPath, 'utf-8');
+    expect(warnings).toEqual([]);
     strictEqual(actualOutput, expectedOutput, `Mismatch between ${package3} and ${outputXml}`);
   });
+
   it('confirm the invalid package provides a warning.', async () => {
-    await SfplList.run(['-x', invalidPackage]);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
-    expect(output).to.include('');
-    const warnings = sfCommandStubs.warn
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
-    expect(warnings).to.include('The provided package is invalid or has no components. Creating empty list file.');
+    const { warnings } = await packageXmlToList({
+      xmlPath: invalidPackage,
+      listPath: 'package.txt',
+      noApiVersion: false,
+    });
+    expect(warnings).toContain('The provided package is invalid or has no components. Creating empty list file.');
   });
+
   it('confirm the invalid list provides a warning.', async () => {
-    await SfplXml.run(['-l', invalidList]);
-    const output = sfCommandStubs.log
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
-    expect(output).to.include('');
-    const warnings = sfCommandStubs.warn
-      .getCalls()
-      .flatMap((c) => c.args)
-      .join('\n');
-    expect(warnings).to.include(
+    const { warnings } = await listToPackageXml({ listPath: invalidList, xmlPath: outputXml, noApiVersion: false });
+    expect(warnings).toContain(
       'Line does not match expected package list format and will be skipped: ApexClass PrepareMySandbox'
     );
+  });
+
+  it('should warn and use empty package.xml if list file does not exist', async () => {
+    const badPath = resolve('samples/does_not_exist.txt');
+    const { warnings, xmlPath } = await listToPackageXml({
+      listPath: badPath,
+      xmlPath: outputXml,
+      noApiVersion: false,
+    });
+    expect(warnings).toContain(`List file "${badPath}" could not be read. Using empty package.xml.`);
+    const actualOutput = await readFile(xmlPath, 'utf-8');
+    expect(actualOutput).toContain('<Package');
+    expect(actualOutput).not.toContain('<types>');
+  });
+
+  it('should warn and use empty package.xml when no listPath is provided', async () => {
+    const { warnings, xmlPath } = await listToPackageXml({
+      listPath: undefined,
+      xmlPath: outputXml,
+      noApiVersion: false,
+    });
+    expect(warnings).toContain('No list file provided. Using empty package.xml.');
+    const actualOutput = await readFile(xmlPath, 'utf-8');
+    expect(actualOutput).toContain('<Package');
+    expect(actualOutput).not.toContain('<types>');
+  });
+  it('should skip empty or whitespace-only lines in list file', async () => {
+    const listPath = resolve('samples/whitespace-only.txt');
+    const xmlPath = outputXml;
+
+    // Create a test file with whitespace lines
+    const content = `
+    
+    \t  
+CustomObject: ABC
+
+  `;
+    await writeFile(listPath, content);
+
+    const { warnings, xmlPath: outPath } = await listToPackageXml({
+      listPath,
+      xmlPath,
+      noApiVersion: false,
+    });
+
+    // Should parse just the one CustomObject line and skip the rest silently
+    expect(warnings).toEqual([]);
+    const actualOutput = await readFile(outPath, 'utf-8');
+    expect(actualOutput).toContain('<name>CustomObject</name>');
+    expect(actualOutput).toContain('<members>ABC</members>');
+  });
+  it('should warn and write empty list when no xmlPath is provided', async () => {
+    const listPath = resolve('samples/output-no-xmlpath.txt');
+
+    const { packageList, warnings } = await packageXmlToList({
+      xmlPath: undefined,
+      listPath,
+      noApiVersion: false,
+    });
+
+    expect(warnings).toContain('No package.xml file path was provided. Creating empty list file.');
+    expect(packageList).toBe('');
+    const fileContent = await readFile(listPath, 'utf-8');
+    expect(fileContent).toBe('');
+  });
+  it('should warn and write empty list when xmlPath is invalid', async () => {
+    const xmlPath = resolve('samples/does_not_exist.xml');
+    const listPath = resolve('samples/output-invalid-package.txt');
+
+    const { packageList, warnings } = await packageXmlToList({
+      xmlPath,
+      listPath,
+      noApiVersion: false,
+    });
+
+    expect(warnings).toContain('The provided package is invalid or could not be read. Creating empty list file.');
+    expect(packageList).toBe('');
+    const fileContent = await readFile(listPath, 'utf-8');
+    expect(fileContent).toBe('');
   });
 });

@@ -2,6 +2,49 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { PackageManifestObject } from '@salesforce/source-deploy-retrieve';
 import { XMLBuilder } from 'fast-xml-parser';
 
+export async function listToPackageXml({
+  listPath,
+  xmlPath,
+  noApiVersion,
+}: {
+  listPath?: string;
+  xmlPath: string;
+  noApiVersion: boolean;
+}): Promise<{ xmlPath: string; warnings: string[] }> {
+  const warnings: string[] = [];
+  let xmlString: string;
+
+  let listString: string | undefined;
+  if (listPath) {
+    try {
+      listString = await readFile(listPath, 'utf-8');
+    } catch {
+      warnings.push(`List file "${listPath}" could not be read. Using empty package.xml.`);
+    }
+  } else {
+    warnings.push('No list file provided. Using empty package.xml.');
+  }
+
+  if (listString) {
+    const lines = listString.split('\n');
+    const packageJson = parseListLines(lines, noApiVersion, warnings);
+    xmlString = buildXmlString(packageJson);
+  } else {
+    xmlString = generateEmptyPackageXml();
+  }
+
+  await writeFile(xmlPath, xmlString);
+  return { xmlPath, warnings };
+}
+
+function buildXmlString(packageJson: PackageManifestObject): string {
+  const builder = new XMLBuilder({ format: true, ignoreAttributes: false, indentBy: '    ' });
+  let xml = builder.build(packageJson) as string;
+  xml = xml.replace(/\s*<version>0\.0<\/version>\s*/g, '');
+  xml = xml.replace(/(\s*)<\/Package>/, '\n</Package>');
+  return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml;
+}
+
 function generateEmptyPackageXml(): string {
   const emptyPackage: PackageManifestObject = {
     Package: {
@@ -10,11 +53,7 @@ function generateEmptyPackageXml(): string {
       version: '0.0',
     },
   };
-  const builder = new XMLBuilder({ format: true, ignoreAttributes: false, indentBy: '    ' });
-  let xmlString = builder.build(emptyPackage) as string;
-  xmlString = xmlString.replace(/\s*<version>0\.0<\/version>\s*/g, '');
-  xmlString = xmlString.replace(/(\s*)<\/Package>/, '\n</Package>');
-  return '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlString;
+  return buildXmlString(emptyPackage);
 }
 
 function parseListLines(lines: string[], noApiVersion: boolean, warnings: string[]): PackageManifestObject {
@@ -55,43 +94,4 @@ function parseListLines(lines: string[], noApiVersion: boolean, warnings: string
   }
 
   return packageJson;
-}
-
-export async function listToPackageXml(
-  listPath: string | undefined,
-  xmlPath: string,
-  noApiVersion: boolean
-): Promise<string[]> {
-  const warnings: string[] = [];
-  let listString: string | undefined;
-  let xmlString;
-
-  if (listPath) {
-    try {
-      listString = await readFile(listPath, 'utf-8');
-    } catch {
-      warnings.push(`List file "${listPath}" could not be read. Using empty package.xml.`);
-    }
-  } else {
-    warnings.push('No list file provided. Using empty package.xml.');
-  }
-
-  if (listString) {
-    const lines = listString.split('\n');
-    const packageJson = parseListLines(lines, noApiVersion, warnings);
-
-    const builder = new XMLBuilder({ format: true, ignoreAttributes: false, indentBy: '    ' });
-    xmlString = builder.build(packageJson) as string;
-
-    xmlString = xmlString.replace(/\s*<version>0\.0<\/version>\s*/g, '');
-    xmlString = xmlString.replace(/(\s*)<\/Package>/, '\n</Package>');
-    // final string
-    xmlString = '<?xml version="1.0" encoding="UTF-8"?>\n' + xmlString;
-  } else {
-    xmlString = generateEmptyPackageXml();
-  }
-
-  await writeFile(xmlPath, xmlString);
-
-  return warnings;
 }

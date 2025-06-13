@@ -1,39 +1,41 @@
 import { writeFile } from 'node:fs/promises';
 import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
-export async function packageXmlToList(
-  xmlPath: string | undefined,
-  listPath: string,
-  noApiVersion: boolean
-): Promise<{ packageList: string; warnings: string[] }> {
+export async function packageXmlToList({
+  xmlPath,
+  listPath,
+  noApiVersion,
+}: {
+  xmlPath?: string;
+  listPath: string;
+  noApiVersion: boolean;
+}): Promise<{ packageList: string; warnings: string[] }> {
   const warnings: string[] = [];
-  let packageList: string;
 
   if (!xmlPath) {
     warnings.push('No package.xml file path was provided. Creating empty list file.');
+    await writeFile(listPath, '');
+    return { packageList: '', warnings };
   }
 
-  if (xmlPath) {
-    let componentSet: ComponentSet;
-    try {
-      componentSet = await ComponentSet.fromManifest({ manifestPath: xmlPath });
-    } catch (err) {
-      warnings.push('The provided package is invalid or has no components. Creating empty list file.');
-      return { packageList: '', warnings };
-    }
-
+  try {
+    const componentSet = await ComponentSet.fromManifest({ manifestPath: xmlPath });
     const metadataTypes = groupComponentsByType(componentSet);
+
     if (metadataTypes.size === 0) {
       warnings.push('The provided package is invalid or has no components. Creating empty list file.');
+      await writeFile(listPath, '');
       return { packageList: '', warnings };
     }
 
-    packageList = buildPackageList(metadataTypes, componentSet.sourceApiVersion, noApiVersion);
-  } else {
-    packageList = '';
+    const packageList = buildPackageList(metadataTypes, componentSet.sourceApiVersion, noApiVersion);
+    await writeFile(listPath, packageList);
+    return { packageList, warnings };
+  } catch (err) {
+    warnings.push('The provided package is invalid or could not be read. Creating empty list file.');
+    await writeFile(listPath, '');
+    return { packageList: '', warnings };
   }
-  await writeFile(listPath, packageList);
-  return { packageList, warnings };
 }
 
 function buildPackageList(

@@ -2,18 +2,15 @@ import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
 
 import { listToPackageXml } from '../../core/listToPackageXml.js';
+import { SfPackageXmlResult } from '../../core/types.js';
 
 Messages.importMessagesDirectoryFromMetaUrl(import.meta.url);
 const messages = Messages.loadMessages('sf-package-list', 'sfpl.xml');
 
-export type SfPackageXmlResult = {
-  path: string;
-};
-
 export default class SfplXml extends SfCommand<SfPackageXmlResult> {
-  public static readonly summary = messages.getMessage('summary');
-  public static readonly description = messages.getMessage('description');
-  public static readonly examples = messages.getMessages('examples');
+  public static override readonly summary = messages.getMessage('summary');
+  public static override readonly description = messages.getMessage('description');
+  public static override readonly examples = messages.getMessages('examples');
 
   public static readonly flags = {
     'package-xml': Flags.file({
@@ -39,18 +36,14 @@ export default class SfplXml extends SfCommand<SfPackageXmlResult> {
   public async run(): Promise<SfPackageXmlResult> {
     const { flags } = await this.parse(SfplXml);
 
-    const packageXml = flags['package-xml'];
-    const packageList = flags['package-list'];
-    const noApiVersion = flags['no-api-version'];
+    const result = await listToPackageXml({
+      listPath: flags['package-list'],
+      xmlPath: flags['package-xml'],
+      noApiVersion: flags['no-api-version'],
+    });
 
-    const warnings = await listToPackageXml(packageList, packageXml, noApiVersion);
-    // Print warnings if any
-    if (warnings.length > 0) {
-      warnings.forEach((warning) => {
-        this.warn(warning);
-      });
-    }
-    this.log(`The package XML has been written to ${packageXml}`);
-    return { path: packageXml };
+    result.warnings.forEach((w) => this.warn(w));
+    this.log(`The package XML has been written to ${result.xmlPath}`);
+    return { path: result.xmlPath };
   }
 }
