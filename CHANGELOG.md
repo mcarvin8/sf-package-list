@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.9](https://github.com/mcarvin8/sf-package-list/compare/v1.2.8...v1.2.9) (2025-06-13)
+
+
+### Bug Fixes
+
+* add jest to hit full coverage and move cmd logic into functions ([#34](https://github.com/mcarvin8/sf-package-list/issues/34)) ([b8b11bf](https://github.com/mcarvin8/sf-package-list/commit/b8b11bf7e9cee79f1f49d97f054aa86cc3c88231))
+
 ## [1.2.8](https://github.com/mcarvin8/sf-package-list/compare/v1.2.7...v1.2.8) (2025-06-01)
 
 
