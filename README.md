@@ -172,13 +172,13 @@ EXAMPLES
 
 ## Troubleshooting
 
-If the provided `package.xml` is invalid or has no components, you’ll get this warning:
+If the provided `package.xml` to convert to list format is invalid or has no components, you’ll get this warning:
 
 ```
 Warning: The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.
 ```
 
-If the provided package list has invalid lines, each invalid line will be skipped with a warning:
+If the provided package list to convert to XML format has invalid lines, each invalid line will be skipped with a warning:
 
 ```
 Warning: Line does not match expected package list format and will be skipped: ${line}
