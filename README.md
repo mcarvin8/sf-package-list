@@ -100,6 +100,8 @@ Salesforce `package.xml` files can be verbose and tricky to edit manually. This 
 
 ### Package List
 
+> Separate multiple metadata members using a comma.
+
 ```
 CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold
 CustomObject: ABC, Glengarry, Mitch_And_Murray
