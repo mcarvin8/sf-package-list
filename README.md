@@ -23,6 +23,7 @@ This makes working with metadata easier for admins and developers, especially in
 - [Commands](#commands)
   - [`sf sfpl list`](#sf-sfpl-list)
   - [`sf sfpl xml`](#sf-sfpl-xml)
+- [Troubleshooting](#troubleshooting)
 - [Use Case](#use-case)
 - [Issues](#issues)
 - [License](#license)
@@ -140,12 +141,6 @@ EXAMPLES
   $ sf sfpl list -x package.xml -l package.txt -n
 ```
 
-If the provided `package.xml` is invalid or has no components, you’ll see:
-
-```
-The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.
-```
-
 ---
 
 ### `sf sfpl xml`
@@ -173,11 +168,23 @@ EXAMPLES
   $ sf sfpl xml -x package.xml -l package.txt -n
 ```
 
-Invalid lines in the list will be skipped with a warning like:
+---
+
+## Troubleshooting
+
+If the provided `package.xml` is invalid or has no components, you’ll see:
+
+```
+The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.
+```
+
+If the provided package list has invalid lines, each invalid line will be skipped with a warning:
 
 ```
 Line does not match expected package list format and will be skipped: ${line}
 ```
+
+By default, the output of both commands will be an empty file, either an empty `package.xml` (no `<types>` in it) or an empty package list text file.
 
 ---
 
