@@ -172,19 +172,21 @@ EXAMPLES
 
 ## Troubleshooting
 
-If the provided `package.xml` is invalid or has no components, you’ll see:
+If the provided `package.xml` is invalid or has no components, you’ll get this warning:
 
 ```
-The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.
+Warning: The provided package is invalid or has no components. Confirm package is a valid Salesforce package.xml.
 ```
 
 If the provided package list has invalid lines, each invalid line will be skipped with a warning:
 
 ```
-Line does not match expected package list format and will be skipped: ${line}
+Warning: Line does not match expected package list format and will be skipped: ${line}
 ```
 
 By default, the output of both commands will be an empty file, either an empty `package.xml` (no `<types>` in it) or an empty package list text file.
+
+The plugin should not fail even if the inputs are invalid or missing.
 
 ---
 
