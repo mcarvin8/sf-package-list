@@ -5,6 +5,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.10](https://github.com/mcarvin8/sf-package-list/compare/v1.2.9...v1.2.10) (2025-07-01)
+
+
+### Bug Fixes
+
+* **deps:** bump @oclif/core from 4.3.0 to 4.4.0 ([#36](https://github.com/mcarvin8/sf-package-list/issues/36)) ([6fc9a1e](https://github.com/mcarvin8/sf-package-list/commit/6fc9a1e63e5a64c510e3e1af1f2fd289364c9ebd))
+* **deps:** bump @salesforce/source-deploy-retrieve ([#40](https://github.com/mcarvin8/sf-package-list/issues/40)) ([79c4e97](https://github.com/mcarvin8/sf-package-list/commit/79c4e97da6d6af0c165b0d2b992119882fe38049))
+
 ## [1.2.9](https://github.com/mcarvin8/sf-package-list/compare/v1.2.8...v1.2.9) (2025-06-13)
 
 
