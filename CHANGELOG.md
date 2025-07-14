@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.11](https://github.com/mcarvin8/sf-package-list/compare/v1.2.10...v1.2.11) (2025-07-14)
+
+
+### Bug Fixes
+
+* upgrade node requirement to 20 ([3df55d2](https://github.com/mcarvin8/sf-package-list/commit/3df55d20d12f7518202b1d2a4232446ad3c5c6ac))
+
 ## [1.2.10](https://github.com/mcarvin8/sf-package-list/compare/v1.2.9...v1.2.10) (2025-07-01)
 
 
