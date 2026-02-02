@@ -1,0 +1,25 @@
+test/commands/sfpl/list.test.ts
+  345eb419455b6e89 184
+src/core/packageXmlToList.ts
+  345eb419455b6e89 35-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.42",
+  "base_commit_sha": "aaa6cbfe8624f459ecc9214dfe455b96b1cdd368",
+  "prompts": {
+    "345eb419455b6e89": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "223fe986-315b-42dc-aa3e-dbc777db589d",
+        "model": "default"
+      },
+      "human_author": "Matt Carvin <90224411+mcarvin8@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 3,
+      "total_deletions": 2,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
