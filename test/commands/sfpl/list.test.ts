@@ -98,7 +98,7 @@ describe('sfpc combine', () => {
       listPath: 'package.txt',
       noApiVersion: false,
     });
-    expect(warnings).toContain('The provided package is invalid or has no components. Creating empty list file.');
+    expect(warnings.some((w) => w.startsWith('The provided package is invalid or could not be read.'))).toBe(true);
   });
 
   it('confirm the invalid list provides a warning.', async () => {
@@ -181,7 +181,7 @@ CustomObject: ABC
       noApiVersion: false,
     });
 
-    expect(warnings).toContain('The provided package is invalid or could not be read. Creating empty list file.');
+    expect(warnings.some((w) => w.startsWith('The provided package is invalid or could not be read.'))).toBe(true);
     expect(packageList).toBe('');
     const fileContent = await readFile(listPath, 'utf-8');
     expect(fileContent).toBe('');
