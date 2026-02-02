@@ -16,6 +16,7 @@ describe('sfpc combine', () => {
   const list3 = resolve('test/samples/list-multiple-types.txt');
   const outputXml = resolve('package.xml');
   const invalidPackage = resolve('test/samples/invalid-package.xml');
+  const invalidPackageType = resolve('test/samples/invalid-package-type.xml');
   const invalidList = resolve('test/samples/invalid-list.txt');
 
   it('convert the package 1 into list format.', async () => {
@@ -101,6 +102,18 @@ describe('sfpc combine', () => {
     expect(warnings.some((w) => w.startsWith('The provided package is invalid or could not be read.'))).toBe(true);
   });
 
+  it('confirm the invalid package type provides a warning.', async () => {
+    const { warnings } = await packageXmlToList({
+      xmlPath: invalidPackageType,
+      listPath: 'package.txt',
+      noApiVersion: false,
+    });
+    expect(
+      warnings.some((w) =>
+        w.startsWith('The provided package is invalid or has no components. Creating empty list file.')
+      )
+    ).toBe(true);
+  });
   it('confirm the invalid list provides a warning.', async () => {
     const { warnings } = await listToPackageXml({ listPath: invalidList, xmlPath: outputXml, noApiVersion: false });
     expect(warnings).toContain(
