@@ -7,13 +7,13 @@ import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 
 describe('sfpc combine NUTs', () => {
   let session: TestSession;
-  const package1 = resolve('samples/package1.xml');
-  const list1 = resolve('samples/list1.txt');
-  const package2 = resolve('samples/package2.xml');
-  const package2NoApi = resolve('samples/package2_no_version.xml');
-  const list2 = resolve('samples/list2.txt');
-  const package3 = resolve('samples/package3.xml');
-  const list3 = resolve('samples/list3.txt');
+  const package1 = resolve('test/samples/package-basic.xml');
+  const list1 = resolve('test/samples/list-basic.txt');
+  const package2 = resolve('test/samples/package-with-api-version.xml');
+  const package2NoApi = resolve('test/samples/package-no-api-version.xml');
+  const list2 = resolve('test/samples/list-with-api-version.txt');
+  const package3 = resolve('test/samples/package-multiple-types.xml');
+  const list3 = resolve('test/samples/list-multiple-types.txt');
   const outputXml = resolve('package.xml');
 
   beforeAll(async () => {

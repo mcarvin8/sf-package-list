@@ -7,16 +7,16 @@ import { listToPackageXml } from '../../../src/core/listToPackageXml.js';
 import { packageXmlToList } from '../../../src/core/packageXmlToList.js';
 
 describe('sfpc combine', () => {
-  const package1 = resolve('samples/package1.xml');
-  const list1 = resolve('samples/list1.txt');
-  const package2 = resolve('samples/package2.xml');
-  const package2NoApi = resolve('samples/package2_no_version.xml');
-  const list2 = resolve('samples/list2.txt');
-  const package3 = resolve('samples/package3.xml');
-  const list3 = resolve('samples/list3.txt');
+  const package1 = resolve('test/samples/package-basic.xml');
+  const list1 = resolve('test/samples/list-basic.txt');
+  const package2 = resolve('test/samples/package-with-api-version.xml');
+  const package2NoApi = resolve('test/samples/package-no-api-version.xml');
+  const list2 = resolve('test/samples/list-with-api-version.txt');
+  const package3 = resolve('test/samples/package-multiple-types.xml');
+  const list3 = resolve('test/samples/list-multiple-types.txt');
   const outputXml = resolve('package.xml');
-  const invalidPackage = resolve('samples/invalid.xml');
-  const invalidList = resolve('samples/invalid.txt');
+  const invalidPackage = resolve('test/samples/invalid-package.xml');
+  const invalidList = resolve('test/samples/invalid-list.txt');
 
   it('convert the package 1 into list format.', async () => {
     const { packageList, warnings } = await packageXmlToList({
@@ -109,7 +109,7 @@ describe('sfpc combine', () => {
   });
 
   it('should warn and use empty package.xml if list file does not exist', async () => {
-    const badPath = resolve('samples/does_not_exist.txt');
+    const badPath = resolve('test/samples/does_not_exist.txt');
     const { warnings, xmlPath } = await listToPackageXml({
       listPath: badPath,
       xmlPath: outputXml,
@@ -133,7 +133,7 @@ describe('sfpc combine', () => {
     expect(actualOutput).not.toContain('<types>');
   });
   it('should skip empty or whitespace-only lines in list file', async () => {
-    const listPath = resolve('samples/whitespace-only.txt');
+    const listPath = resolve('test/samples/list-whitespace-only.txt');
     const xmlPath = outputXml;
 
     // Create a test file with whitespace lines
@@ -158,7 +158,7 @@ CustomObject: ABC
     expect(actualOutput).toContain('<members>ABC</members>');
   });
   it('should warn and write empty list when no xmlPath is provided', async () => {
-    const listPath = resolve('samples/output-no-xmlpath.txt');
+    const listPath = resolve('test/samples/output-no-xmlpath.txt');
 
     const { packageList, warnings } = await packageXmlToList({
       xmlPath: undefined,
@@ -172,8 +172,8 @@ CustomObject: ABC
     expect(fileContent).toBe('');
   });
   it('should warn and write empty list when xmlPath is invalid', async () => {
-    const xmlPath = resolve('samples/does_not_exist.xml');
-    const listPath = resolve('samples/output-invalid-package.txt');
+    const xmlPath = resolve('test/samples/does_not_exist.xml');
+    const listPath = resolve('test/samples/output-invalid-package.txt');
 
     const { packageList, warnings } = await packageXmlToList({
       xmlPath,
