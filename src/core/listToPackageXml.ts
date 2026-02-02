@@ -39,7 +39,7 @@ export async function listToPackageXml({
 
 function buildXmlString(packageJson: PackageManifestObject): string {
   const builder = new XMLBuilder({ format: true, ignoreAttributes: false, indentBy: '    ' });
-  let xml = builder.build(packageJson) as string;
+  let xml = builder.build(packageJson);
   xml = xml.replace(/\s*<version>0\.0<\/version>\s*/g, '');
   xml = xml.replace(/(\s*)<\/Package>/, '\n</Package>');
   return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml;

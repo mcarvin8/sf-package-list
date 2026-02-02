@@ -32,7 +32,8 @@ export async function packageXmlToList({
     await writeFile(listPath, packageList);
     return { packageList, warnings };
   } catch (err) {
-    warnings.push('The provided package is invalid or could not be read. Creating empty list file.');
+    const errMessage = err instanceof Error ? err.message : String(err);
+    warnings.push(`The provided package is invalid or could not be read. Creating empty list file. ${errMessage}`);
     await writeFile(listPath, '');
     return { packageList: '', warnings };
   }
