@@ -1,4 +1,4 @@
-# `sf-package-list`
+# sf-package-list
 
 [![NPM](https://img.shields.io/npm/v/sf-package-list.svg?label=sf-package-list)](https://www.npmjs.com/package/sf-package-list)
 [![Downloads/week](https://img.shields.io/npm/dw/sf-package-list.svg)](https://npmjs.org/package/sf-package-list)
