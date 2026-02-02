@@ -106,10 +106,12 @@ sf sfpl xml -l package.txt -x package.xml
 
 ## Troubleshooting
 
-- **Invalid package.xml** — You'll get a warning and an empty output. Confirm the file is valid.
+- **Invalid package.xml** — When converting package.xml to list format, any errors from `@salesforce/source-deploy-retrieve` (e.g. unknown metadata types, parse errors) are included in the warning message. You'll get a warning and empty output; confirm the file is valid or check the warning for SDR details.
 - **Invalid list lines** — Each invalid line is skipped with a warning showing the line content. Output continues for valid lines.
 
 The plugin does not fail on invalid or missing inputs; it produces empty output instead.
+
+Note: A missing metadata type definition can also occur if the type is newer than the @salesforce/source-deploy-retrieve version bundled with this plugin. Upgrading the plugin may resolve the issue for newly released metadata types.
 
 ---
 
