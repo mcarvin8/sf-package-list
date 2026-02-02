@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.12](https://github.com/mcarvin8/sf-package-list/compare/v1.2.11...v1.2.12) (2026-02-02)
+
+
+### Bug Fixes
+
+* update all salesforce dependencies and include sdr messages in error logs ([#59](https://github.com/mcarvin8/sf-package-list/issues/59)) ([0faa24a](https://github.com/mcarvin8/sf-package-list/commit/0faa24a6379f2a0fbb45cf431d65a3802df93de5))
+
 ## [1.2.11](https://github.com/mcarvin8/sf-package-list/compare/v1.2.10...v1.2.11) (2025-07-14)
 
 
