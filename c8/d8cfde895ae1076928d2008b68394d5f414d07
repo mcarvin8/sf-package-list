@@ -1,0 +1,14 @@
+src/core/listToPackageXml.ts
+  h_b104b674256482 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "c8d8cfde895ae1076928d2008b68394d5f414d07",
+  "prompts": {},
+  "humans": {
+    "h_b104b674256482": {
+      "author": "Matt Carvin"
+    }
+  }
+}
