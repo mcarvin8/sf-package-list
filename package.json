@@ -7,7 +7,7 @@
     "@salesforce/core": "^8.25.0",
     "@salesforce/sf-plugins-core": "^12.2.6",
     "@salesforce/source-deploy-retrieve": "^12.31.10",
-    "fast-xml-parser": "^5.3.4"
+    "fast-xml-builder": "^1.1.5"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^20.5.0",
