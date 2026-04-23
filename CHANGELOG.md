@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.13](https://github.com/mcarvin8/sf-package-list/compare/v1.2.12...v1.2.13) (2026-04-23)
+
+
+### Bug Fixes
+
+* **builder:** switch from fast-xml-parser to fast-xml-builder ([#61](https://github.com/mcarvin8/sf-package-list/issues/61)) ([550d534](https://github.com/mcarvin8/sf-package-list/commit/550d534f27cb49cd9f406962162d783c911fc902))
+
 ## [1.2.12](https://github.com/mcarvin8/sf-package-list/compare/v1.2.11...v1.2.12) (2026-02-02)
 
 
