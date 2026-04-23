@@ -1,7 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { strictEqual } from 'node:assert';
-import { describe, it, expect } from '@jest/globals';
+import { describe, it, expect } from 'vitest';
 
 import { listToPackageXml } from '../../../src/core/listToPackageXml.js';
 import { packageXmlToList } from '../../../src/core/packageXmlToList.js';
@@ -110,14 +110,14 @@ describe('sfpc combine', () => {
     });
     expect(
       warnings.some((w) =>
-        w.startsWith('The provided package is invalid or has no components. Creating empty list file.')
-      )
+        w.startsWith('The provided package is invalid or has no components. Creating empty list file.'),
+      ),
     ).toBe(true);
   });
   it('confirm the invalid list provides a warning.', async () => {
     const { warnings } = await listToPackageXml({ listPath: invalidList, xmlPath: outputXml, noApiVersion: false });
     expect(warnings).toContain(
-      'Line does not match expected package list format and will be skipped: ApexClass PrepareMySandbox'
+      'Line does not match expected package list format and will be skipped: ApexClass PrepareMySandbox',
     );
   });
 
