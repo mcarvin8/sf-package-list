@@ -1,0 +1,23 @@
+README.md
+  345eb419455b6e89 11,30,36-37,72,91,93-94,96,98,100-102,109-110,112,118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.0.42",
+  "base_commit_sha": "7089e5d45bd088915b4e7f3e3fb796aebf46f2d3",
+  "prompts": {
+    "345eb419455b6e89": {
+      "agent_id": {
+        "tool": "cursor",
+        "id": "223fe986-315b-42dc-aa3e-dbc777db589d",
+        "model": "default"
+      },
+      "human_author": "Matt Carvin <90224411+mcarvin8@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 67,
+      "total_deletions": 103,
+      "accepted_lines": 62,
+      "overriden_lines": 1
+    }
+  }
+}
