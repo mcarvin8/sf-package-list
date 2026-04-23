@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { PackageManifestObject } from '@salesforce/source-deploy-retrieve';
-import { XMLBuilder } from 'fast-xml-parser';
+import XMLBuilder from 'fast-xml-builder';
 
 export async function listToPackageXml({
   listPath,
