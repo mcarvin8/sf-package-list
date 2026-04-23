@@ -1,0 +1,24 @@
+test/commands/sfpl/list.test.ts
+  h_b104b674256482 4
+vitest.config.ts
+  h_b104b674256482 1-22
+package.json
+  h_b104b674256482 19,27,81,163,171-172
+README.md
+  h_b104b674256482 7
+test/commands/sfpl/list.nut.ts
+  h_b104b674256482 4
+vitest.nut.config.ts
+  h_b104b674256482 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "6fd17f0fd73a8d361bf9a0328ca25f475767a2ec",
+  "prompts": {},
+  "humans": {
+    "h_b104b674256482": {
+      "author": "Matt Carvin"
+    }
+  }
+}
