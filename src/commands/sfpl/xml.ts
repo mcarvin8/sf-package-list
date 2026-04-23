@@ -12,7 +12,7 @@ export default class SfplXml extends SfCommand<SfPackageXmlResult> {
   public static override readonly description = messages.getMessage('description');
   public static override readonly examples = messages.getMessages('examples');
 
-  public static readonly flags = {
+  public static override readonly flags = {
     'package-xml': Flags.file({
       summary: messages.getMessage('flags.package-xml.summary'),
       char: 'x',
