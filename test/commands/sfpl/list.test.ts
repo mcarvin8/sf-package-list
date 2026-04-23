@@ -1,7 +1,8 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { strictEqual } from 'node:assert';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 
 import { listToPackageXml } from '../../../src/core/listToPackageXml.js';
 import { packageXmlToList } from '../../../src/core/packageXmlToList.js';
@@ -198,5 +199,26 @@ CustomObject: ABC
     expect(packageList).toBe('');
     const fileContent = await readFile(listPath, 'utf-8');
     expect(fileContent).toBe('');
+  });
+
+  it('should handle non-Error thrown values when reading package.xml', async () => {
+    const xmlPath = resolve('test/samples/package-basic.xml');
+    const listPath = resolve('test/samples/output-non-error-throw.txt');
+    const spy = vi.spyOn(ComponentSet, 'fromManifest').mockRejectedValueOnce('boom-string');
+
+    try {
+      const { packageList, warnings } = await packageXmlToList({
+        xmlPath,
+        listPath,
+        noApiVersion: false,
+      });
+
+      expect(packageList).toBe('');
+      expect(warnings.some((w) => w.includes('boom-string'))).toBe(true);
+      const fileContent = await readFile(listPath, 'utf-8');
+      expect(fileContent).toBe('');
+    } finally {
+      spy.mockRestore();
+    }
   });
 });
