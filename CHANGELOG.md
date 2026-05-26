@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.1](https://github.com/mcarvin8/sf-package-list/compare/v1.3.0...v1.3.1) (2026-05-26)
+
+
+### Bug Fixes
+
+* **deps:** pin direct dependencies to exact versions ([#69](https://github.com/mcarvin8/sf-package-list/issues/69)) ([e6b1493](https://github.com/mcarvin8/sf-package-list/commit/e6b149343cfe63c9dc99fe0c445f541d33c7a663))
+
 ## [1.3.0](https://github.com/mcarvin8/sf-package-list/compare/v1.2.13...v1.3.0) (2026-05-01)
 
 
