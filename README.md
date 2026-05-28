@@ -6,9 +6,7 @@
 [![Maintainability](https://qlty.sh/badges/3f1779cc-038e-48f0-b693-52f72e106d67/maintainability.svg)](https://qlty.sh/gh/mcarvin8/projects/sf-package-list)
 [![codecov](https://codecov.io/gh/mcarvin8/sf-package-list/graph/badge.svg?token=SAT4HZCEHU)](https://codecov.io/gh/mcarvin8/sf-package-list)
 
-A Salesforce CLI plugin that helps you convert `package.xml` files to a simple, human-readable list format—and back again.
-
-This makes working with metadata easier for admins and developers, especially in version control systems, automation pipelines, or anywhere you want to quickly review or edit what's being deployed.
+Salesforce CLI plugin to convert `package.xml` files to a human-readable list format—and back.
 
 ---
 
@@ -20,21 +18,21 @@ sf plugins install sf-package-list
 
 ---
 
-## What It Does
+## List Format
 
-This plugin lets you:
+Each metadata type gets one line: `TypeName: member1, member2, ...`
 
-- Convert a Salesforce `package.xml` to a cleaner, flat **package list**
-- Convert a **package list** back into a valid `package.xml`
-
-Both directions are supported. The list format uses `TypeName: member1, member2` per line—easy to read, edit, and diff. No XML knowledge required. Works well with version control and CI/CD pipelines.
-
----
-
-## Examples
+```
+CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold
+CustomObject: ABC, Glengarry, Mitch_And_Murray
+CustomField: Glengarry.Weak_Leadz__c, Coffee.is_Closer__c
+EmailTemplate: unfiled$public/Second_Prize_Set_of_Steak_Knives
+StandardValueSet: Glengarry_Leads, Cadillac_Eldorado
+Version: 59.0
+```
 
 <details>
-<summary>package.xml (click to expand)</summary>
+<summary>Equivalent package.xml</summary>
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -71,59 +69,57 @@ Both directions are supported. The list format uses `TypeName: member1, member2`
 
 </details>
 
-### Package List
-
-> Separate multiple metadata members using a comma.
-
-```
-CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold
-CustomObject: ABC, Glengarry, Mitch_And_Murray
-CustomField: Glengarry.Weak_Leadz__c, Coffee.is_Closer__c
-EmailTemplate: unfiled$public/Second_Prize_Set_of_Steak_Knives
-StandardValueSet: Glengarry_Leads, Cadillac_Eldorado
-Version: 59.0
-```
-
 ---
 
 ## Commands
 
-| Command                                            | Description                |
-| -------------------------------------------------- | -------------------------- |
-| `sf sfpl list -x package.xml [-l output.txt] [-n]` | Convert package.xml → list |
-| `sf sfpl xml -l list.txt [-x package.xml] [-n]`    | Convert list → package.xml |
-
-**Flags:** `-x` / `--package-xml` — path to package.xml. `-l` / `--package-list` — path to list file. `-n` / `--no-api-version` — exclude API version from output.
-
-**Quick start:**
+### `sf sfpl list` — package.xml → list
 
 ```bash
-sf sfpl list -x package.xml -l package.txt
-sf sfpl xml -l package.txt -x package.xml
+sf sfpl list -x <package.xml> [-l <output.txt>] [-n]
 ```
+
+| Flag               | Short | Default       | Description                      |
+| ------------------ | ----- | ------------- | -------------------------------- |
+| `--package-xml`    | `-x`  | —             | Path to the source `package.xml` |
+| `--package-list`   | `-l`  | `package.txt` | Output path for the list file    |
+| `--no-api-version` | `-n`  | `false`       | Omit API version from output     |
+
+### `sf sfpl xml` — list → package.xml
+
+```bash
+sf sfpl xml -l <list.txt> [-x <package.xml>] [-n]
+```
+
+| Flag               | Short | Default       | Description                                 |
+| ------------------ | ----- | ------------- | ------------------------------------------- |
+| `--package-list`   | `-l`  | —             | Path to the source list file                |
+| `--package-xml`    | `-x`  | `package.xml` | Output path for the generated `package.xml` |
+| `--no-api-version` | `-n`  | `false`       | Omit API version from output                |
+
+---
+
+## Use Cases
+
+- **CI/CD pipelines** — list format is easier to diff, review, and edit than XML
+- **sfdx-git-delta workflows** — paste metadata lists into MR descriptions or CI variables instead of raw XML
+- **Destructive deployments** — build a list, convert to `destructiveChanges.xml`
 
 ---
 
 ## Troubleshooting
 
-- **Invalid package.xml** — When converting package.xml to list format, any errors from `@salesforce/source-deploy-retrieve` (e.g. unknown metadata types, parse errors) are included in the warning message. You'll get a warning and empty output; confirm the file is valid or check the warning for SDR details.
-- **Invalid list lines** — Each invalid line is skipped with a warning showing the line content. Output continues for valid lines.
+**Invalid `package.xml`** — Errors from `@salesforce/source-deploy-retrieve` (unknown types, parse failures) surface as warnings and produce empty output. If a type is unrecognized, the SDR version bundled with this plugin may predate that metadata type; upgrading the plugin may resolve it.
 
-The plugin does not fail on invalid or missing inputs; it produces empty output instead.
+**Invalid list lines** — Each malformed line is skipped with a warning. Valid lines still produce output.
 
-Note: A missing metadata type definition can also occur if the type is newer than the @salesforce/source-deploy-retrieve version bundled with this plugin. Upgrading the plugin may resolve the issue for newly released metadata types.
-
----
-
-## Use Case
-
-Works well with `sfdx-git-delta` and CI/CD. Instead of copying `package.xml`, developers can paste metadata in list format—e.g., in merge request descriptions or CI variables. Also useful for destructive deployments: paste a list into a form field and convert to `destructiveChanges.xml`.
+The plugin never throws on bad input—it warns and continues.
 
 ---
 
 ## Issues
 
-Found a bug or have an idea? [Open an issue](https://github.com/mcarvin8/sf-package-list/issues).
+Found a bug or have a feature request? [Open an issue](https://github.com/mcarvin8/sf-package-list/issues).
 
 ---
 
