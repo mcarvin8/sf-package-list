@@ -16,7 +16,7 @@
     "fileName": "reports/mutation/mutation-testing-report.json"
   },
   "dashboard": {
-    "project": "github.com/mcarvin8/sf-package-combiner",
+    "project": "github.com/mcarvin8/sf-package-list",
     "version": "main",
     "reportType": "full"
   },
