@@ -104,9 +104,10 @@ describe('sfpc combine', () => {
   });
 
   it('confirm the invalid package type provides a warning.', async () => {
-    const { warnings } = await packageXmlToList({
+    const invalidTypePath = resolve('test/samples/output-invalid-package-type.txt');
+    const { packageList, warnings } = await packageXmlToList({
       xmlPath: invalidPackageType,
-      listPath: 'package.txt',
+      listPath: invalidTypePath,
       noApiVersion: false,
     });
     expect(
@@ -114,6 +115,9 @@ describe('sfpc combine', () => {
         w.startsWith('The provided package is invalid or has no components. Creating empty list file.'),
       ),
     ).toBe(true);
+    expect(packageList).toBe('');
+    const fileContent = await readFile(invalidTypePath, 'utf-8');
+    expect(fileContent).toBe('');
   });
   it('confirm the invalid list provides a warning.', async () => {
     const { warnings } = await listToPackageXml({ listPath: invalidList, xmlPath: outputXml, noApiVersion: false });
@@ -131,8 +135,9 @@ describe('sfpc combine', () => {
     });
     expect(warnings).toContain(`List file "${badPath}" could not be read. Using empty package.xml.`);
     const actualOutput = await readFile(xmlPath, 'utf-8');
-    expect(actualOutput).toContain('<Package');
+    expect(actualOutput).toContain('xmlns="http://soap.sforce.com/2006/04/metadata"');
     expect(actualOutput).not.toContain('<types>');
+    expect(actualOutput).not.toContain('<version>');
   });
 
   it('should warn and use empty package.xml when no listPath is provided', async () => {
@@ -143,8 +148,9 @@ describe('sfpc combine', () => {
     });
     expect(warnings).toContain('No list file provided. Using empty package.xml.');
     const actualOutput = await readFile(xmlPath, 'utf-8');
-    expect(actualOutput).toContain('<Package');
+    expect(actualOutput).toContain('xmlns="http://soap.sforce.com/2006/04/metadata"');
     expect(actualOutput).not.toContain('<types>');
+    expect(actualOutput).not.toContain('<version>');
   });
   it('should skip empty or whitespace-only lines in list file', async () => {
     const listPath = resolve('test/samples/list-whitespace-only.txt');
@@ -171,6 +177,20 @@ CustomObject: ABC
     expect(actualOutput).toContain('<name>CustomObject</name>');
     expect(actualOutput).toContain('<members>ABC</members>');
   });
+  it('should filter empty members caused by trailing commas in list file', async () => {
+    const listPath = resolve('test/samples/list-trailing-comma.txt');
+    await writeFile(listPath, 'CustomObject: ABC,DEF,\n');
+    const { warnings, xmlPath: outPath } = await listToPackageXml({
+      listPath,
+      xmlPath: outputXml,
+      noApiVersion: true,
+    });
+    expect(warnings).toEqual([]);
+    const actualOutput = await readFile(outPath, 'utf-8');
+    const memberMatches = actualOutput.match(/<members>/g);
+    expect(memberMatches).toHaveLength(2);
+  });
+
   it('should warn and write empty list when no xmlPath is provided', async () => {
     const listPath = resolve('test/samples/output-no-xmlpath.txt');
 
