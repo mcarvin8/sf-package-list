@@ -183,7 +183,7 @@ This makes it easier to communicate deployment scope than sharing raw `package.x
 
 **Invalid `package.xml`** — Errors from `@salesforce/source-deploy-retrieve` (unknown types, parse failures) surface as warnings and produce empty output. If a type is unrecognized, the SDR version bundled with this plugin may predate that metadata type; upgrading the plugin may resolve it.
 
-**Invalid list lines** — Each malformed line is skipped with a warning. Valid lines still produce output.
+**Invalid list lines** — Each malformed line is skipped with a warning. Valid lines still produce output. Metadata type names are also validated against the SDR registry; unknown types are skipped with a warning. If a type is unrecognized, the SDR version bundled with this plugin may predate that metadata type; upgrading the plugin may resolve it.
 
 The plugin never throws on bad input—it warns and continues.
 
