@@ -1,6 +1,7 @@
 import { readFile, unlink, writeFile } from 'node:fs/promises';
 import { resolve, join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { randomUUID } from 'node:crypto';
 import { strictEqual } from 'node:assert';
 import { describe, it, expect, vi } from 'vitest';
 import { ComponentSet } from '@salesforce/source-deploy-retrieve';
@@ -219,7 +220,7 @@ CustomObject: ABC
   });
 
   it('should warn and write empty list when no xmlPath is provided', async () => {
-    const listPath = join(tmpdir(), 'sf-package-list-test-no-xmlpath.txt');
+    const listPath = join(tmpdir(), `sf-package-list-test-no-xmlpath-${randomUUID()}.txt`);
     try {
       const { packageList, warnings } = await packageXmlToList({
         xmlPath: undefined,
