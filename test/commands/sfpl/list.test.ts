@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { readFile, unlink, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { strictEqual } from 'node:assert';
 import { describe, it, expect, vi } from 'vitest';
@@ -124,6 +124,26 @@ describe('sfpc combine', () => {
     expect(warnings).toContain(
       'Line does not match expected package list format and will be skipped: ApexClass PrepareMySandbox',
     );
+  });
+
+  it('should warn and skip unknown metadata types not in SDR registry.', async () => {
+    const tmpList = resolve('test/samples/output-unknown-type-list.txt');
+    await writeFile(tmpList, 'NotARealType: SomeMember\nApexClass: MyClass');
+    try {
+      const { warnings, xmlPath: outPath } = await listToPackageXml({
+        listPath: tmpList,
+        xmlPath: outputXml,
+        noApiVersion: true,
+      });
+      expect(warnings).toContain(
+        'Unknown metadata type "NotARealType" is not in the SDR registry and will be skipped.',
+      );
+      const xml = await readFile(outPath, 'utf-8');
+      expect(xml).not.toContain('NotARealType');
+      expect(xml).toContain('ApexClass');
+    } finally {
+      await unlink(tmpList);
+    }
   });
 
   it('should warn and use empty package.xml if list file does not exist', async () => {

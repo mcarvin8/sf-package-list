@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import { PackageManifestObject } from '@salesforce/source-deploy-retrieve';
+import { PackageManifestObject, registry } from '@salesforce/source-deploy-retrieve';
 import XMLBuilder from 'fast-xml-builder';
 
 export async function listToPackageXml({
@@ -82,6 +82,11 @@ function parseListLines(lines: string[], noApiVersion: boolean, warnings: string
       if (!noApiVersion) {
         packageJson.Package.version = values;
       }
+      continue;
+    }
+
+    if (!registry.types[key.toLowerCase()] && !registry.childTypes[key.toLowerCase()]) {
+      warnings.push(`Unknown metadata type "${key}" is not in the SDR registry and will be skipped.`);
       continue;
     }
 
