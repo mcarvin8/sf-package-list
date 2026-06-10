@@ -178,42 +178,44 @@ describe('sfpc combine', () => {
     expect(actualOutput).not.toContain('<version>');
   });
   it('should skip empty or whitespace-only lines in list file', async () => {
-    const listPath = resolve('test/samples/list-whitespace-only.txt');
-    const xmlPath = outputXml;
-
-    // Create a test file with whitespace lines
+    const listPath = join(tmpdir(), 'sf-package-list-test-whitespace-only.txt');
     const content = `
-    
-    \t  
+
+    \t
 CustomObject: ABC
 
   `;
-    await writeFile(listPath, content);
-
-    const { warnings, xmlPath: outPath } = await listToPackageXml({
-      listPath,
-      xmlPath,
-      noApiVersion: false,
-    });
-
-    // Should parse just the one CustomObject line and skip the rest silently
-    expect(warnings).toEqual([]);
-    const actualOutput = await readFile(outPath, 'utf-8');
-    expect(actualOutput).toContain('<name>CustomObject</name>');
-    expect(actualOutput).toContain('<members>ABC</members>');
+    try {
+      await writeFile(listPath, content);
+      const { warnings, xmlPath: outPath } = await listToPackageXml({
+        listPath,
+        xmlPath: outputXml,
+        noApiVersion: false,
+      });
+      expect(warnings).toEqual([]);
+      const actualOutput = await readFile(outPath, 'utf-8');
+      expect(actualOutput).toContain('<name>CustomObject</name>');
+      expect(actualOutput).toContain('<members>ABC</members>');
+    } finally {
+      await unlink(listPath).catch(() => {});
+    }
   });
   it('should filter empty members caused by trailing commas in list file', async () => {
-    const listPath = resolve('test/samples/list-trailing-comma.txt');
-    await writeFile(listPath, 'CustomObject: ABC,DEF,\n');
-    const { warnings, xmlPath: outPath } = await listToPackageXml({
-      listPath,
-      xmlPath: outputXml,
-      noApiVersion: true,
-    });
-    expect(warnings).toEqual([]);
-    const actualOutput = await readFile(outPath, 'utf-8');
-    const memberMatches = actualOutput.match(/<members>/g);
-    expect(memberMatches).toHaveLength(2);
+    const listPath = join(tmpdir(), 'sf-package-list-test-trailing-comma.txt');
+    try {
+      await writeFile(listPath, 'CustomObject: ABC,DEF,\n');
+      const { warnings, xmlPath: outPath } = await listToPackageXml({
+        listPath,
+        xmlPath: outputXml,
+        noApiVersion: true,
+      });
+      expect(warnings).toEqual([]);
+      const actualOutput = await readFile(outPath, 'utf-8');
+      const memberMatches = actualOutput.match(/<members>/g);
+      expect(memberMatches).toHaveLength(2);
+    } finally {
+      await unlink(listPath).catch(() => {});
+    }
   });
 
   it('should warn and write empty list when no xmlPath is provided', async () => {
@@ -234,23 +236,25 @@ CustomObject: ABC
   });
   it('should warn and write empty list when xmlPath is invalid', async () => {
     const xmlPath = resolve('test/samples/does_not_exist.xml');
-    const listPath = resolve('test/samples/output-invalid-package.txt');
-
-    const { packageList, warnings } = await packageXmlToList({
-      xmlPath,
-      listPath,
-      noApiVersion: false,
-    });
-
-    expect(warnings.some((w) => w.startsWith('The provided package is invalid or could not be read.'))).toBe(true);
-    expect(packageList).toBe('');
-    const fileContent = await readFile(listPath, 'utf-8');
-    expect(fileContent).toBe('');
+    const listPath = join(tmpdir(), 'sf-package-list-test-invalid-package.txt');
+    try {
+      const { packageList, warnings } = await packageXmlToList({
+        xmlPath,
+        listPath,
+        noApiVersion: false,
+      });
+      expect(warnings.some((w) => w.startsWith('The provided package is invalid or could not be read.'))).toBe(true);
+      expect(packageList).toBe('');
+      const fileContent = await readFile(listPath, 'utf-8');
+      expect(fileContent).toBe('');
+    } finally {
+      await unlink(listPath).catch(() => {});
+    }
   });
 
   it('should handle non-Error thrown values when reading package.xml', async () => {
     const xmlPath = resolve('test/samples/package-basic.xml');
-    const listPath = resolve('test/samples/output-non-error-throw.txt');
+    const listPath = join(tmpdir(), 'sf-package-list-test-non-error-throw.txt');
     const spy = vi.spyOn(ComponentSet, 'fromManifest').mockRejectedValueOnce('boom-string');
 
     try {
@@ -259,13 +263,13 @@ CustomObject: ABC
         listPath,
         noApiVersion: false,
       });
-
       expect(packageList).toBe('');
       expect(warnings.some((w) => w.includes('boom-string'))).toBe(true);
       const fileContent = await readFile(listPath, 'utf-8');
       expect(fileContent).toBe('');
     } finally {
       spy.mockRestore();
+      await unlink(listPath).catch(() => {});
     }
   });
 });
