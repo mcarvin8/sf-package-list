@@ -126,6 +126,20 @@ describe('sfpc combine', () => {
     );
   });
 
+  it('should warn and skip unknown metadata types not in SDR registry.', async () => {
+    const tmpList = resolve('test/samples/output-unknown-type-list.txt');
+    await writeFile(tmpList, 'NotARealType: SomeMember\nApexClass: MyClass');
+    const { warnings, xmlPath: outPath } = await listToPackageXml({
+      listPath: tmpList,
+      xmlPath: outputXml,
+      noApiVersion: true,
+    });
+    expect(warnings).toContain('Unknown metadata type "NotARealType" is not in the SDR registry and will be skipped.');
+    const xml = await readFile(outPath, 'utf-8');
+    expect(xml).not.toContain('NotARealType');
+    expect(xml).toContain('ApexClass');
+  });
+
   it('should warn and use empty package.xml if list file does not exist', async () => {
     const badPath = resolve('test/samples/does_not_exist.txt');
     const { warnings, xmlPath } = await listToPackageXml({
