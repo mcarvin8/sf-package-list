@@ -1,5 +1,5 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import { PackageManifestObject, registry } from '@salesforce/source-deploy-retrieve';
+import { PackageManifestObject, RegistryAccess } from '@salesforce/source-deploy-retrieve';
 import XMLBuilder from 'fast-xml-builder';
 
 export async function listToPackageXml({
@@ -57,6 +57,8 @@ function generateEmptyPackageXml(): string {
   return buildXmlString(emptyPackage);
 }
 
+const registryAccess = new RegistryAccess();
+
 function parseListLines(lines: string[], noApiVersion: boolean, warnings: string[]): PackageManifestObject {
   const packageJson: PackageManifestObject = {
     Package: {
@@ -85,7 +87,9 @@ function parseListLines(lines: string[], noApiVersion: boolean, warnings: string
       continue;
     }
 
-    if (!registry.types[key.toLowerCase()] && !registry.childTypes[key.toLowerCase()]) {
+    try {
+      registryAccess.getTypeByName(key);
+    } catch {
       warnings.push(`Unknown metadata type "${key}" is not in the SDR registry and will be skipped.`);
       continue;
     }
