@@ -1,5 +1,6 @@
 import { readFile, unlink, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { resolve, join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { strictEqual } from 'node:assert';
 import { describe, it, expect, vi } from 'vitest';
 import { ComponentSet } from '@salesforce/source-deploy-retrieve';
@@ -104,20 +105,24 @@ describe('sfpc combine', () => {
   });
 
   it('confirm the invalid package type provides a warning.', async () => {
-    const invalidTypePath = resolve('test/samples/output-invalid-package-type.txt');
-    const { packageList, warnings } = await packageXmlToList({
-      xmlPath: invalidPackageType,
-      listPath: invalidTypePath,
-      noApiVersion: false,
-    });
-    expect(
-      warnings.some((w) =>
-        w.startsWith('The provided package is invalid or has no components. Creating empty list file.'),
-      ),
-    ).toBe(true);
-    expect(packageList).toBe('');
-    const fileContent = await readFile(invalidTypePath, 'utf-8');
-    expect(fileContent).toBe('');
+    const invalidTypePath = join(tmpdir(), 'sf-package-list-test-invalid-type.txt');
+    try {
+      const { packageList, warnings } = await packageXmlToList({
+        xmlPath: invalidPackageType,
+        listPath: invalidTypePath,
+        noApiVersion: false,
+      });
+      expect(
+        warnings.some((w) =>
+          w.startsWith('The provided package is invalid or has no components. Creating empty list file.'),
+        ),
+      ).toBe(true);
+      expect(packageList).toBe('');
+      const fileContent = await readFile(invalidTypePath, 'utf-8');
+      expect(fileContent).toBe('');
+    } finally {
+      await unlink(invalidTypePath).catch(() => {});
+    }
   });
   it('confirm the invalid list provides a warning.', async () => {
     const { warnings } = await listToPackageXml({ listPath: invalidList, xmlPath: outputXml, noApiVersion: false });
@@ -212,18 +217,20 @@ CustomObject: ABC
   });
 
   it('should warn and write empty list when no xmlPath is provided', async () => {
-    const listPath = resolve('test/samples/output-no-xmlpath.txt');
-
-    const { packageList, warnings } = await packageXmlToList({
-      xmlPath: undefined,
-      listPath,
-      noApiVersion: false,
-    });
-
-    expect(warnings).toContain('No package.xml file path was provided. Creating empty list file.');
-    expect(packageList).toBe('');
-    const fileContent = await readFile(listPath, 'utf-8');
-    expect(fileContent).toBe('');
+    const listPath = join(tmpdir(), 'sf-package-list-test-no-xmlpath.txt');
+    try {
+      const { packageList, warnings } = await packageXmlToList({
+        xmlPath: undefined,
+        listPath,
+        noApiVersion: false,
+      });
+      expect(warnings).toContain('No package.xml file path was provided. Creating empty list file.');
+      expect(packageList).toBe('');
+      const fileContent = await readFile(listPath, 'utf-8');
+      expect(fileContent).toBe('');
+    } finally {
+      await unlink(listPath).catch(() => {});
+    }
   });
   it('should warn and write empty list when xmlPath is invalid', async () => {
     const xmlPath = resolve('test/samples/does_not_exist.xml');
