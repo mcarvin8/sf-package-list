@@ -5,6 +5,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/mcarvin8/sf-package-list/compare/v1.4.0...v1.5.0) (2026-06-10)
+
+
+### Features
+
+* **core:** validate metadata types against SDR registry in listToPackageXml ([#75](https://github.com/mcarvin8/sf-package-list/issues/75)) ([3f40a66](https://github.com/mcarvin8/sf-package-list/commit/3f40a66588f6434f1558ba11d6725821c19cc2b4))
+* **metadata:** bump @salesforce/source-deploy-retrieve ([#73](https://github.com/mcarvin8/sf-package-list/issues/73)) ([b14921e](https://github.com/mcarvin8/sf-package-list/commit/b14921e1a181810ad72c7286b6a63fd8aeb98a9f))
+
 ## [1.4.0](https://github.com/mcarvin8/sf-package-list/compare/v1.3.1...v1.4.0) (2026-06-02)
 
 
