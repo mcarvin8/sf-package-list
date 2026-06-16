@@ -197,4 +197,4 @@ Found a bug or have a feature request? [Open an issue](https://github.com/mcarvi
 
 ## License
 
-[MIT](https://raw.githubusercontent.com/mcarvin8/sf-package-list/main/LICENSE.md)
+[MIT](LICENSE.md)
