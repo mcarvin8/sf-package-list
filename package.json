@@ -1,6 +1,6 @@
 {
   "name": "sf-package-list",
-  "description": "Convert Salesforce manifest files (package.xml) into list format.",
+  "description": "Convert Salesforce package.xml manifests to and from plain-text list format.",
   "version": "1.5.0",
   "dependencies": {
     "@oclif/core": "4.8.0",
@@ -42,14 +42,16 @@
   "keywords": [
     "salesforce",
     "salesforcedx",
+    "sfdx",
     "sf",
     "sf-plugin",
     "package.xml",
     "manifest",
+    "metadata",
     "list",
+    "package-list",
     "deployment",
-    "convert",
-    "transform"
+    "convert"
   ],
   "license": "MIT",
   "oclif": {
