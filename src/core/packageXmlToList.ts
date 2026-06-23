@@ -42,7 +42,7 @@ export async function packageXmlToList({
 function buildPackageList(
   metadataTypes: Map<string, string[]>,
   apiVersion: string | undefined,
-  noApiVersion: boolean
+  noApiVersion: boolean,
 ): string {
   const lines = Array.from(metadataTypes.entries()).map(([type, members]) => `${type}: ${members.join(', ')}`);
 
