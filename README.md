@@ -74,7 +74,9 @@ Version: 59.0
 
 ## Commands
 
-### `sf sfpl list` — package.xml → list
+### `sf sfpl list`
+
+> package.xml → list
 
 ```bash
 sf sfpl list -x <package.xml> [-l <output.txt>] [-n]
@@ -86,7 +88,9 @@ sf sfpl list -x <package.xml> [-l <output.txt>] [-n]
 | `--package-list`   | `-l`  | `package.txt` | Output path for the list file    |
 | `--no-api-version` | `-n`  | `false`       | Omit API version from output     |
 
-### `sf sfpl xml` — list → package.xml
+### `sf sfpl xml`
+
+> list → package.xml
 
 ```bash
 sf sfpl xml -l <list.txt> [-x <package.xml>] [-n]
