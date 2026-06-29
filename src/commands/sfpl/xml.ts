@@ -1,5 +1,5 @@
-import { SfCommand, Flags } from '@salesforce/sf-plugins-core';
 import { Messages } from '@salesforce/core';
+import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 
 import { listToPackageXml } from '../../core/listToPackageXml.js';
 import { SfPackageXmlResult } from '../../core/types.js';
