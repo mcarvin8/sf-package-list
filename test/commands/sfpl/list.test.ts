@@ -1,10 +1,10 @@
-import { readFile, unlink, writeFile } from 'node:fs/promises';
-import { resolve, join } from 'node:path';
-import { tmpdir } from 'node:os';
-import { randomUUID } from 'node:crypto';
 import { strictEqual } from 'node:assert';
-import { describe, it, expect, vi } from 'vitest';
+import { randomUUID } from 'node:crypto';
+import { readFile, unlink, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { ComponentSet } from '@salesforce/source-deploy-retrieve';
+import { describe, expect, it, vi } from 'vitest';
 
 import { listToPackageXml } from '../../../src/core/listToPackageXml.js';
 import { packageXmlToList } from '../../../src/core/packageXmlToList.js';
