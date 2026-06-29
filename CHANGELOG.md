@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.1](https://github.com/mcarvin8/sf-package-list/compare/v1.6.0...v1.6.1) (2026-06-29)
+
+
+### Bug Fixes
+
+* **deps:** bump all deps, remove Node 20 support ([#83](https://github.com/mcarvin8/sf-package-list/issues/83)) ([8e4e679](https://github.com/mcarvin8/sf-package-list/commit/8e4e679ed2b7914c0463114b378e5664fd5894d6))
+
 ## [1.6.0](https://github.com/mcarvin8/sf-package-list/compare/v1.5.0...v1.6.0) (2026-06-22)
 
 
