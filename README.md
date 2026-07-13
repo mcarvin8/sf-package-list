@@ -145,7 +145,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
@@ -156,22 +156,20 @@ jobs:
           echo y | sf plugins install sf-package-list
 
       - name: Generate delta package.xml
-        run: |
-          mkdir diff
-          sf sgd source delta --to HEAD --from HEAD^ --output diff/
+        run: sf sgd source delta --to HEAD --from HEAD^ --output .
 
       - name: Print deployment manifest as list
-        run: sf sfpl list -x diff/package/package.xml -l diff/package.txt
+        run: sf sfpl list -x package/package.xml -l package.txt
         # ^ prints/creates a human-readable summary of the delta package.xml
 
       - name: Show manifest in job log
-        run: cat diff/package.txt
+        run: cat package.txt
 
       - name: Authenticate to Salesforce
         run: sf org login sfdx-url --sfdx-url-file ${{ secrets.SFDX_AUTH_URL }} --alias ci-org
 
       - name: Deploy delta
-        run: sf project deploy start -x diff/package/package.xml -o ci-org
+        run: sf project deploy start -x package/package.xml -o ci-org
 ```
 
 The `package.txt` printed in the log becomes a quick, reviewable manifest of the deployment—no need to open the generated XML to confirm scope.
@@ -209,7 +207,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install Salesforce CLI
         run: npm install -g @salesforce/cli@latest
@@ -224,13 +222,7 @@ jobs:
         run: sf sfpl xml -l destructive.txt -x destructiveChanges.xml -n
 
       - name: Write empty package.xml
-        run: |
-          cat > package.xml <<'EOF'
-          <?xml version="1.0" encoding="UTF-8"?>
-          <Package xmlns="http://soap.sforce.com/2006/04/metadata">
-              <version>62.0</version>
-          </Package>
-          EOF
+        run: sf sfpl xml -x package.xml -n
 
       - name: Authenticate to Salesforce
         run: sf org login sfdx-url --sfdx-url-file ${{ secrets.SFDX_AUTH_URL }} --alias ci-org
