@@ -122,6 +122,60 @@ ApexClass: InvoiceController
 
 This provides a human-readable deployment summary without requiring reviewers to inspect generated XML.
 
+**Example: print the `sfdx-git-delta` package.xml as a list before deploying**
+
+[`sfdx-git-delta`](https://github.com/scolladon/sfdx-git-delta) generates a `package.xml`/`destructiveChanges.xml` from a git diff. Convert the generated `package.xml` to list format and print it to the job log so reviewers can see exactly what will deploy before the deploy step runs:
+
+```yaml
+name: deploy
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli@latest
+
+      - name: Install plugins
+        run: |
+          echo y | sf plugins install sfdx-git-delta
+          echo y | sf plugins install sf-package-list
+
+      - name: Generate delta package.xml
+        run: |
+          mkdir diff
+          sf sgd source delta --to HEAD --from HEAD^ --output diff/
+
+      - name: Print deployment manifest as list
+        run: sf sfpl list -x diff/package/package.xml -l diff/package.txt
+        # ^ prints/creates a human-readable summary of the delta package.xml
+
+      - name: Show manifest in job log
+        run: cat diff/package.txt
+
+      - name: Authenticate to Salesforce
+        run: sf org login sfdx-url --sfdx-url-file ${{ secrets.SFDX_AUTH_URL }} --alias ci-org
+
+      - name: Deploy delta
+        run: sf project deploy start -x diff/package/package.xml -o ci-org
+```
+
+The `package.txt` printed in the log becomes a quick, reviewable manifest of the deployment—no need to open the generated XML to confirm scope.
+
 ### Controlled Destructive Deployments
 
 Use a package list as a restricted allowlist of metadata to remove.
@@ -129,6 +183,63 @@ Use a package list as a restricted allowlist of metadata to remove.
 Teams can maintain destructive changes in source control as a simple text file, review them during change approval, convert them to `destructiveChanges.xml` during pipeline execution, and deploy only the explicitly declared components.
 
 This approach helps reduce the risk of accidentally deleting metadata that was not intended to be included in a destructive deployment.
+
+**Example: `workflow_dispatch` input (package list) → `destructiveChanges.xml`**
+
+Accept the list of components to delete as a manual `workflow_dispatch` text input, restricting the destructive deployment to exactly what an approver typed in—no free-form XML editing required:
+
+```yaml
+name: destructive-deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      destructive_list:
+        description: 'Components to delete, in package-list format (e.g. "CustomField: Invoice__c.Old_Field__c")'
+        required: true
+        type: string
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Salesforce CLI
+        run: npm install -g @salesforce/cli@latest
+
+      - name: Install plugin
+        run: echo y | sf plugins install sf-package-list
+
+      - name: Write approved list to file
+        run: printf '%s\n' "${{ github.event.inputs.destructive_list }}" > destructive.txt
+
+      - name: Convert list to destructiveChanges.xml
+        run: sf sfpl xml -l destructive.txt -x destructiveChanges.xml -n
+
+      - name: Write empty package.xml
+        run: |
+          cat > package.xml <<'EOF'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <Package xmlns="http://soap.sforce.com/2006/04/metadata">
+              <version>62.0</version>
+          </Package>
+          EOF
+
+      - name: Authenticate to Salesforce
+        run: sf org login sfdx-url --sfdx-url-file ${{ secrets.SFDX_AUTH_URL }} --alias ci-org
+
+      - name: Deploy destructive changes
+        run: sf project deploy start -x package.xml --post-destructive-changes destructiveChanges.xml -o ci-org
+```
+
+Because the destructive scope comes only from the typed `workflow_dispatch` input, the deployment is limited to exactly the components an approver declared—nothing picked up implicitly from a branch diff or working directory.
 
 ### Pipeline-Driven Metadata Selection
 
