@@ -159,11 +159,7 @@ jobs:
         run: sf sgd source delta --to HEAD --from HEAD^ --output .
 
       - name: Print deployment manifest as list
-        run: sf sfpl list -x package/package.xml -l package.txt
-        # ^ prints/creates a human-readable summary of the delta package.xml
-
-      - name: Show manifest in job log
-        run: cat package.txt
+        run: sf sfpl list -x package/package.xml
 
       - name: Authenticate to Salesforce
         run: sf org login sfdx-url --sfdx-url-file ${{ secrets.SFDX_AUTH_URL }} --alias ci-org
