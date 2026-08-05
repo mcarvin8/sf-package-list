@@ -14,7 +14,7 @@ Convert Salesforce `package.xml` manifests to and from a human-readable list for
 ## Requirements
 
 - Salesforce CLI (`sf`)
-- Node.js **22.x or later**
+- Node.js **22.19 or later**
 
 ---
 
