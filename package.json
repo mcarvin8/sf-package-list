@@ -1,7 +1,7 @@
 {
   "name": "sf-package-list",
   "description": "Convert Salesforce package.xml manifests to and from plain-text list format.",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "dependencies": {
     "@oclif/core": "4.13.5",
     "@salesforce/core": "9.1.2",
