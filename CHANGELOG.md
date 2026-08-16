@@ -5,6 +5,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.1.0](https://github.com/mcarvin8/sf-package-list/compare/v2.0.0...v2.1.0) (2026-08-16)
+
+
+### Features
+
+* **metadata:** support AiAgentDefinition, AiAgentDefinitionVersion ([f9d22c3](https://github.com/mcarvin8/sf-package-list/commit/f9d22c344a128ddf603381071229ca803297395b))
+
+
+### Bug Fixes
+
+* **deps:** bump the dependencies group across 1 directory with 4 updates ([#93](https://github.com/mcarvin8/sf-package-list/issues/93)) ([8c90478](https://github.com/mcarvin8/sf-package-list/commit/8c904783c03c15d8bca5be0479305be876d33a1a))
+
 ## [2.0.0](https://github.com/mcarvin8/sf-package-list/compare/v1.8.0...v2.0.0) (2026-08-05)
 
 
