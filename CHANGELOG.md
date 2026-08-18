@@ -5,6 +5,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/mcarvin8/sf-package-list/compare/v2.1.0...v3.0.0) (2026-08-18)
+
+
+### ⚠ BREAKING CHANGES
+
+* **manifest:** metadata type names are no longer validated or case-normalized against Salesforce's metadata registry in either direction. Manifests are now checked only for structural correctness (a single <Package> root with well-formed <types>/<members>/<version> elements). A misspelled or nonexistent metadata type will pass through to the output instead of being rejected here.
+
+### Features
+
+* **manifest:** parse package.xml in-house instead of via source-deploy-retrieve ([#96](https://github.com/mcarvin8/sf-package-list/issues/96)) ([46007b5](https://github.com/mcarvin8/sf-package-list/commit/46007b56d5800f7e1267805195cdf9d3950269f4))
+
 ## [2.1.0](https://github.com/mcarvin8/sf-package-list/compare/v2.0.0...v2.1.0) (2026-08-16)
 
 
