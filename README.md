@@ -293,7 +293,7 @@ This makes it easier to communicate deployment scope than sharing raw `package.x
 
 Manifests and list files are parsed in-house and checked only against *structure*, not against Salesforce's metadata registry. `<name>`/type-name values are taken as-is; a misspelled or nonexistent metadata type will pass through to the output instead of being rejected here—deployment will fail on it later, not here.
 
-**Invalid `package.xml`** — A `<Package>` document that doesn't match the expected Metadata API manifest structure (missing/duplicate `<version>`, malformed `<types>`, unexpected elements, etc.) or has no `<types>` surfaces as a warning and produces empty output. The underlying parse error is appended to the warning.
+**Invalid `package.xml`** — A `<Package>` document that doesn't match the expected Metadata API manifest structure (multiple `<version>`, malformed `<types>`, unexpected elements, etc.) or has no `<types>` surfaces as a warning and produces empty output. The underlying parse error is appended to the warning.
 
 **Invalid list lines** — Each malformed line is skipped with a warning. Valid lines still produce output.
 
