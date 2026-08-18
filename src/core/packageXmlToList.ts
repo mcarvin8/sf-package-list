@@ -1,5 +1,6 @@
-import { writeFile } from 'node:fs/promises';
-import { ComponentSet } from '@salesforce/source-deploy-retrieve';
+import { readFile, writeFile } from 'node:fs/promises';
+
+import { ParsedManifest, parseManifestXml } from './parseManifest.js';
 
 export async function packageXmlToList({
   xmlPath,
@@ -19,16 +20,16 @@ export async function packageXmlToList({
   }
 
   try {
-    const componentSet = await ComponentSet.fromManifest({ manifestPath: xmlPath });
-    const metadataTypes = groupComponentsByType(componentSet);
+    const xml = await readFile(xmlPath, 'utf-8');
+    const manifest = parseManifestXml(xml);
 
-    if (metadataTypes.size === 0) {
+    if (manifest.types.length === 0) {
       warnings.push('The provided package is invalid or has no components. Creating empty list file.');
       await writeFile(listPath, '');
       return { packageList: '', warnings };
     }
 
-    const packageList = buildPackageList(metadataTypes, componentSet.sourceApiVersion, noApiVersion);
+    const packageList = buildPackageList(manifest, noApiVersion);
     await writeFile(listPath, packageList);
     return { packageList, warnings };
   } catch (err) {
@@ -39,28 +40,12 @@ export async function packageXmlToList({
   }
 }
 
-function buildPackageList(
-  metadataTypes: Map<string, string[]>,
-  apiVersion: string | undefined,
-  noApiVersion: boolean,
-): string {
-  const lines = Array.from(metadataTypes.entries()).map(([type, members]) => `${type}: ${members.join(', ')}`);
+function buildPackageList(manifest: ParsedManifest, noApiVersion: boolean): string {
+  const lines = manifest.types.map((type) => `${type.name}: ${type.members.join(', ')}`);
 
-  if (apiVersion && !noApiVersion) {
-    lines.push(`Version: ${apiVersion}`);
+  if (manifest.version && !noApiVersion) {
+    lines.push(`Version: ${manifest.version}`);
   }
 
   return lines.join('\n');
-}
-
-function groupComponentsByType(components: ComponentSet): Map<string, string[]> {
-  const map = new Map<string, string[]>();
-  for (const component of components) {
-    const typeName = component.type.name;
-    if (!map.has(typeName)) {
-      map.set(typeName, []);
-    }
-    map.get(typeName)!.push(component.fullName);
-  }
-  return map;
 }

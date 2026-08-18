@@ -1,6 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import { PackageManifestObject, RegistryAccess } from '@salesforce/source-deploy-retrieve';
 import XMLBuilder from 'fast-xml-builder';
+
+import { PackageManifestObject } from './types.js';
 
 export async function listToPackageXml({
   listPath,
@@ -40,8 +41,6 @@ export async function listToPackageXml({
 function buildXmlString(packageJson: PackageManifestObject): string {
   const builder = new XMLBuilder({ format: true, ignoreAttributes: false, indentBy: '    ' });
   let xml = builder.build(packageJson);
-  // Stryker disable next-line Regex
-  xml = xml.replace(/\s*<version>0\.0<\/version>\s*/g, '');
   xml = xml.replace(/(\s*)<\/Package>/, '\n</Package>');
   return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml;
 }
@@ -51,20 +50,18 @@ function generateEmptyPackageXml(): string {
     Package: {
       '@_xmlns': 'http://soap.sforce.com/2006/04/metadata',
       types: [],
-      version: '0.0',
+      version: undefined,
     },
   };
   return buildXmlString(emptyPackage);
 }
-
-const registryAccess = new RegistryAccess();
 
 function parseListLines(lines: string[], noApiVersion: boolean, warnings: string[]): PackageManifestObject {
   const packageJson: PackageManifestObject = {
     Package: {
       '@_xmlns': 'http://soap.sforce.com/2006/04/metadata',
       types: [],
-      version: '0.0',
+      version: undefined,
     },
   };
 
@@ -84,13 +81,6 @@ function parseListLines(lines: string[], noApiVersion: boolean, warnings: string
       if (!noApiVersion) {
         packageJson.Package.version = values;
       }
-      continue;
-    }
-
-    try {
-      registryAccess.getTypeByName(key);
-    } catch {
-      warnings.push(`Unknown metadata type "${key}" is not in the SDR registry and will be skipped.`);
       continue;
     }
 

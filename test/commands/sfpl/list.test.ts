@@ -3,11 +3,15 @@ import { randomUUID } from 'node:crypto';
 import { readFile, unlink, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { ComponentSet } from '@salesforce/source-deploy-retrieve';
 import { describe, expect, it, vi } from 'vitest';
 
 import { listToPackageXml } from '../../../src/core/listToPackageXml.js';
 import { packageXmlToList } from '../../../src/core/packageXmlToList.js';
+
+vi.mock('node:fs/promises', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('node:fs/promises')>();
+  return { ...actual, readFile: vi.fn(actual.readFile) };
+});
 
 describe('sfpc combine', () => {
   const package1 = resolve('test/samples/package-basic.xml');
@@ -96,16 +100,22 @@ describe('sfpc combine', () => {
     strictEqual(actualOutput, expectedOutput, `Mismatch between ${package3} and ${outputXml}`);
   });
 
-  it('confirm the invalid package provides a warning.', async () => {
-    const { warnings } = await packageXmlToList({
-      xmlPath: invalidPackage,
-      listPath: 'package.txt',
-      noApiVersion: false,
-    });
-    expect(warnings.some((w) => w.startsWith('The provided package is invalid or could not be read.'))).toBe(true);
+  it('no longer validates metadata type names in package.xml against the SDR registry (breaking change).', async () => {
+    const typoTypePath = join(tmpdir(), 'sf-package-list-test-typo-type.txt');
+    try {
+      const { packageList, warnings } = await packageXmlToList({
+        xmlPath: invalidPackage,
+        listPath: typoTypePath,
+        noApiVersion: false,
+      });
+      expect(warnings).toEqual([]);
+      expect(packageList.trim()).toEqual('CustomObjecst: ABC');
+    } finally {
+      await unlink(typoTypePath).catch(() => {});
+    }
   });
 
-  it('confirm the invalid package type provides a warning.', async () => {
+  it('confirm a structurally invalid package.xml provides a warning.', async () => {
     const invalidTypePath = join(tmpdir(), 'sf-package-list-test-invalid-type.txt');
     try {
       const { packageList, warnings } = await packageXmlToList({
@@ -113,11 +123,7 @@ describe('sfpc combine', () => {
         listPath: invalidTypePath,
         noApiVersion: false,
       });
-      expect(
-        warnings.some((w) =>
-          w.startsWith('The provided package is invalid or has no components. Creating empty list file.'),
-        ),
-      ).toBe(true);
+      expect(warnings.some((w) => w.startsWith('The provided package is invalid or could not be read.'))).toBe(true);
       expect(packageList).toBe('');
       const fileContent = await readFile(invalidTypePath, 'utf-8');
       expect(fileContent).toBe('');
@@ -132,7 +138,7 @@ describe('sfpc combine', () => {
     );
   });
 
-  it('should warn and skip unknown metadata types not in SDR registry.', async () => {
+  it('no longer validates metadata type names in list format against the SDR registry (breaking change).', async () => {
     const tmpList = resolve('test/samples/output-unknown-type-list.txt');
     await writeFile(tmpList, 'NotARealType: SomeMember\nApexClass: MyClass');
     try {
@@ -141,11 +147,9 @@ describe('sfpc combine', () => {
         xmlPath: outputXml,
         noApiVersion: true,
       });
-      expect(warnings).toContain(
-        'Unknown metadata type "NotARealType" is not in the SDR registry and will be skipped.',
-      );
+      expect(warnings).toEqual([]);
       const xml = await readFile(outPath, 'utf-8');
-      expect(xml).not.toContain('NotARealType');
+      expect(xml).toContain('<name>NotARealType</name>');
       expect(xml).toContain('ApexClass');
     } finally {
       await unlink(tmpList);
@@ -256,7 +260,7 @@ CustomObject: ABC
   it('should handle non-Error thrown values when reading package.xml', async () => {
     const xmlPath = resolve('test/samples/package-basic.xml');
     const listPath = join(tmpdir(), 'sf-package-list-test-non-error-throw.txt');
-    const spy = vi.spyOn(ComponentSet, 'fromManifest').mockRejectedValueOnce('boom-string');
+    vi.mocked(readFile).mockRejectedValueOnce('boom-string');
 
     try {
       const { packageList, warnings } = await packageXmlToList({
@@ -269,7 +273,6 @@ CustomObject: ABC
       const fileContent = await readFile(listPath, 'utf-8');
       expect(fileContent).toBe('');
     } finally {
-      spy.mockRestore();
       await unlink(listPath).catch(() => {});
     }
   });
