@@ -1,6 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
-import XMLBuilder from 'fast-xml-builder';
 
+import { buildXml } from '../utils/xmlBuilder.js';
 import { PackageManifestObject } from './types.js';
 
 export async function listToPackageXml({
@@ -39,10 +39,7 @@ export async function listToPackageXml({
 }
 
 function buildXmlString(packageJson: PackageManifestObject): string {
-  const builder = new XMLBuilder({ format: true, ignoreAttributes: false, indentBy: '    ' });
-  let xml = builder.build(packageJson);
-  xml = xml.replace(/(\s*)<\/Package>/, '\n</Package>');
-  return '<?xml version="1.0" encoding="UTF-8"?>\n' + xml;
+  return '<?xml version="1.0" encoding="UTF-8"?>\n' + buildXml(packageJson);
 }
 
 function generateEmptyPackageXml(): string {
