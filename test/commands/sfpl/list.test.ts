@@ -182,6 +182,14 @@ describe('sfpc combine', () => {
     expect(actualOutput).not.toContain('<types>');
     expect(actualOutput).not.toContain('<version>');
   });
+
+  it('writes an empty package.xml as a single-line self-paired Package tag', async () => {
+    const { xmlPath } = await listToPackageXml({ listPath: undefined, xmlPath: outputXml, noApiVersion: false });
+    const actualOutput = await readFile(xmlPath, 'utf-8');
+    expect(actualOutput).toBe(
+      '<?xml version="1.0" encoding="UTF-8"?>\n<Package xmlns="http://soap.sforce.com/2006/04/metadata"></Package>\n',
+    );
+  });
   it('should skip empty or whitespace-only lines in list file', async () => {
     const listPath = join(tmpdir(), 'sf-package-list-test-whitespace-only.txt');
     const content = `
