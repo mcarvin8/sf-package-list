@@ -265,6 +265,24 @@ CustomObject: ABC
     }
   });
 
+  it('should warn and write empty list when package.xml has no <types>', async () => {
+    const xmlPath = resolve('test/samples/package-no-types.xml');
+    const listPath = join(tmpdir(), 'sf-package-list-test-no-types.txt');
+    try {
+      const { packageList, warnings } = await packageXmlToList({
+        xmlPath,
+        listPath,
+        noApiVersion: false,
+      });
+      expect(warnings).toContain('The provided package is invalid or has no components. Creating empty list file.');
+      expect(packageList).toBe('');
+      const fileContent = await readFile(listPath, 'utf-8');
+      expect(fileContent).toBe('');
+    } finally {
+      await unlink(listPath).catch(() => {});
+    }
+  });
+
   it('should handle non-Error thrown values when reading package.xml', async () => {
     const xmlPath = resolve('test/samples/package-basic.xml');
     const listPath = join(tmpdir(), 'sf-package-list-test-non-error-throw.txt');
