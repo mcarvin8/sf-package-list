@@ -172,4 +172,37 @@ describe('parseManifestXml', () => {
 </Package>`;
     expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A'] }]);
   });
+
+  it('ignores stray text nodes among the parsed roots', () => {
+    const xml = `stray<Package><types><members>A</members><name>ApexClass</name></types></Package>`;
+    expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A'] }]);
+  });
+
+  it('ignores stray text nodes directly inside <Package>', () => {
+    const xml = `<Package>stray<types><members>A</members><name>ApexClass</name></types>stray<version>60.0</version></Package>`;
+    expect(parseManifestXml(xml)).toEqual({
+      types: [{ name: 'ApexClass', members: ['A'] }],
+      version: '60.0',
+    });
+  });
+
+  it('ignores stray text nodes directly inside <types>', () => {
+    const xml = `<Package><types>stray<members>A</members>stray<name>ApexClass</name>stray</types></Package>`;
+    expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A'] }]);
+  });
+
+  it('joins split text nodes without an inserted separator', () => {
+    const xml = `<Package><types><members>A<![CDATA[B]]>C</members><name>ApexClass</name></types></Package>`;
+    expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['ABC'] }]);
+  });
+
+  it('trims text pulled from CDATA sections', () => {
+    const xml = `<Package><types><members><![CDATA[  A  ]]></members><name>ApexClass</name></types></Package>`;
+    expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A'] }]);
+  });
+
+  it('ignores nested element children when extracting text', () => {
+    const xml = `<Package><types><members>A<foo/>B</members><name>ApexClass</name></types></Package>`;
+    expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['AB'] }]);
+  });
 });
