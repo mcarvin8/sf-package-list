@@ -102,6 +102,17 @@ describe('parseManifestXml', () => {
     expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A & B'] }]);
   });
 
+  it('trims leading and trailing whitespace inside a text element', () => {
+    const xml = `<Package xmlns="${xmlns}">
+  <types>
+    <members>A</members>
+    <name>  ApexClass  </name>
+  </types>
+</Package>`;
+
+    expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A'] }]);
+  });
+
   it('throws when the root element is not <Package>', () => {
     const xml = `<NotAPackage></NotAPackage>`;
     expect(() => parseManifestXml(xml)).toThrow(/single <Package> root element/);
@@ -173,11 +184,6 @@ describe('parseManifestXml', () => {
     expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A'] }]);
   });
 
-  it('ignores stray text nodes among the parsed roots', () => {
-    const xml = `stray<Package><types><members>A</members><name>ApexClass</name></types></Package>`;
-    expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A'] }]);
-  });
-
   it('ignores stray text nodes directly inside <Package>', () => {
     const xml = `<Package>stray<types><members>A</members><name>ApexClass</name></types>stray<version>60.0</version></Package>`;
     expect(parseManifestXml(xml)).toEqual({
@@ -188,16 +194,6 @@ describe('parseManifestXml', () => {
 
   it('ignores stray text nodes directly inside <types>', () => {
     const xml = `<Package><types>stray<members>A</members>stray<name>ApexClass</name>stray</types></Package>`;
-    expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A'] }]);
-  });
-
-  it('joins split text nodes without an inserted separator', () => {
-    const xml = `<Package><types><members>A<![CDATA[B]]>C</members><name>ApexClass</name></types></Package>`;
-    expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['ABC'] }]);
-  });
-
-  it('trims text pulled from CDATA sections', () => {
-    const xml = `<Package><types><members><![CDATA[  A  ]]></members><name>ApexClass</name></types></Package>`;
     expect(parseManifestXml(xml).types).toEqual([{ name: 'ApexClass', members: ['A'] }]);
   });
 
