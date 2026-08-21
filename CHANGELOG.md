@@ -5,6 +5,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/mcarvin8/sf-package-list/compare/v3.0.1...v3.1.0) (2026-08-21)
+
+
+### Features
+
+* **parser:** replace txml with an in-house XML parser ([#100](https://github.com/mcarvin8/sf-package-list/issues/100)) ([a40d60d](https://github.com/mcarvin8/sf-package-list/commit/a40d60d8183c9679c9501f9fd89666af42f0022d))
+* publish as native GitHub Actions ([#102](https://github.com/mcarvin8/sf-package-list/issues/102)) ([5347123](https://github.com/mcarvin8/sf-package-list/commit/5347123deb073cf8c5c7f2570bfb0f2a049b3eb9))
+
+
+### Bug Fixes
+
+* **actions:** consolidate to a single GitHub Action with a mode input ([#103](https://github.com/mcarvin8/sf-package-list/issues/103)) ([a462dbe](https://github.com/mcarvin8/sf-package-list/commit/a462dbe069525bbfdb6fce5bcc58de0772468523))
+
 ## [3.0.1](https://github.com/mcarvin8/sf-package-list/compare/v3.0.0...v3.0.1) (2026-08-19)
 
 
