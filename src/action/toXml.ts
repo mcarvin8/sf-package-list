@@ -4,10 +4,10 @@ import { readFile } from 'node:fs/promises';
 
 import * as core from '@actions/core';
 
-import { listToPackageXml } from '../../core/listToPackageXml.js';
-import { parseManifestXml } from '../../core/parseManifest.js';
+import { listToPackageXml } from '../core/listToPackageXml.js';
+import { parseManifestXml } from '../core/parseManifest.js';
 
-export async function run(): Promise<void> {
+export async function runToXml(): Promise<void> {
   try {
     const listPath = core.getInput('package-list') || undefined;
     const xmlPath = core.getInput('package-xml') || 'package.xml';

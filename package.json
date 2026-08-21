@@ -101,34 +101,15 @@
       ]
     },
     "build:action": {
-      "dependencies": [
-        "build:action:to-list",
-        "build:action:to-xml"
-      ]
-    },
-    "build:action:to-list": {
-      "command": "esbuild src/action/toList/index.ts --bundle --minify --platform=node --format=cjs --target=node22 --outfile=dist/action/to-list/index.cjs",
+      "command": "esbuild src/action/index.ts --bundle --minify --platform=node --format=cjs --target=node22 --outfile=dist/action/index.cjs",
       "files": [
-        "src/action/toList/**/*.ts",
+        "src/action/**/*.ts",
         "src/core/**/*.ts",
         "src/utils/**/*.ts",
         "tsconfig.json"
       ],
       "output": [
-        "dist/action/to-list/**"
-      ],
-      "clean": false
-    },
-    "build:action:to-xml": {
-      "command": "esbuild src/action/toXml/index.ts --bundle --minify --platform=node --format=cjs --target=node22 --outfile=dist/action/to-xml/index.cjs",
-      "files": [
-        "src/action/toXml/**/*.ts",
-        "src/core/**/*.ts",
-        "src/utils/**/*.ts",
-        "tsconfig.json"
-      ],
-      "output": [
-        "dist/action/to-xml/**"
+        "dist/action/**"
       ],
       "clean": false
     },

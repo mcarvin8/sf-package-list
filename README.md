@@ -7,7 +7,7 @@
 [![codecov](https://codecov.io/gh/mcarvin8/sf-package-list/graph/badge.svg?token=SAT4HZCEHU)](https://codecov.io/gh/mcarvin8/sf-package-list)
 [![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fmcarvin8%2Fsf-package-list%2Fmain)](https://dashboard.stryker-mutator.io/reports/github.com/mcarvin8/sf-package-list/main)
 
-Convert Salesforce `package.xml` manifests to and from a human-readable list format. Available as a **Salesforce CLI plugin** for any provider, and as **native GitHub Actions** for GitHub Actions users who want to skip installing the CLI.
+Convert Salesforce `package.xml` manifests to and from a human-readable list format. Available as a **Salesforce CLI plugin** for any provider, and as a **native GitHub Action** for GitHub Actions users who want to skip installing the CLI.
 
 ---
 
@@ -26,68 +26,54 @@ sf plugins install sf-package-list
 
 ---
 
-## GitHub Actions
+## GitHub Action
 
-For GitHub Actions, this is also available as two native Actions — no `sf` CLI or plugin install required.
+For GitHub Actions, this is also available as a native Action — no `sf` CLI or plugin install required. One action, two `mode`s:
 
-### `to-list`: package.xml → list
+### `mode: to-list` — package.xml → list
 
 ```yaml
 - name: Convert package.xml to a list
   id: to-list
-  uses: mcarvin8/sf-package-list/to-list@v3
+  uses: mcarvin8/sf-package-list@v3
   with:
+    mode: to-list
     package-xml: package.xml
     package-list: package.txt
 ```
 
-#### Inputs
-
-| Input             | Description                                                                   | Required | Default        |
-| ------------------ | ------------------------------------------------------------------------------ | -------- | -------------- |
-| `package-xml`       | Path to the `package.xml` manifest to convert.                                 | No       |                 |
-| `package-list`      | Path to the package list file that will be created by this action.             | No       | `package.txt`   |
-| `no-api-version`    | Explicitly omit the API version from the generated package list.               | No       | `false`         |
-| `fail-on-empty`     | Fail the action if the generated package list has no types.                    | No       | `false`         |
-
-#### Outputs
-
-| Output              | Description                                                       |
-| -------------------- | --------------------------------------------------------------------- |
-| `package-list-path`  | Path to the generated package list.                                |
-| `types`              | Number of distinct metadata types in the `package.xml`.            |
-| `members`            | Number of members in the `package.xml`.                            |
-| `warnings`           | Newline-separated list of warnings emitted while converting, if any. |
-
-### `to-xml`: list → package.xml
+### `mode: to-xml` — list → package.xml
 
 ```yaml
 - name: Convert a list to package.xml
   id: to-xml
-  uses: mcarvin8/sf-package-list/to-xml@v3
+  uses: mcarvin8/sf-package-list@v3
   with:
+    mode: to-xml
     package-list: package.txt
     package-xml: package.xml
 ```
 
-#### Inputs
+### Inputs
 
-| Input             | Description                                                                   | Required | Default        |
-| ------------------ | ------------------------------------------------------------------------------ | -------- | -------------- |
-| `package-list`      | Path to the package list file to convert.                                     | No       |                 |
-| `package-xml`       | Path to the `package.xml` manifest that will be created by this action.        | No       | `package.xml`   |
-| `no-api-version`    | Explicitly omit the API version from the generated `package.xml`.              | No       | `false`         |
-| `fail-on-empty`     | Fail the action if the generated `package.xml` has no `<types>`.               | No       | `false`         |
+| Input             | Description                                                                                                     | Required | Default        |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- | -------- | -------------- |
+| `mode`               | Conversion direction: `to-list` (package.xml → list) or `to-xml` (list → package.xml).                             | **Yes**  |                 |
+| `package-xml`        | `to-list`: source `package.xml`. `to-xml`: output path for the generated `package.xml`.                            | No       | `package.xml`   |
+| `package-list`       | `to-list`: output path for the generated package list. `to-xml`: source package list.                              | No       | `package.txt`   |
+| `no-api-version`     | Explicitly omit the API version from the generated output.                                                        | No       | `false`         |
+| `fail-on-empty`      | Fail the action if the generated output has no types.                                                             | No       | `false`         |
 
-#### Outputs
+### Outputs
 
-| Output              | Description                                                                |
-| -------------------- | ----------------------------------------------------------------------------- |
-| `package-xml-path`   | Path to the generated `package.xml`.                                        |
-| `types`              | Number of distinct metadata types in the generated `package.xml`.           |
-| `members`            | Number of members in the generated `package.xml`.                          |
-| `api-version`        | API version used in the generated `package.xml` (empty when omitted).       |
-| `warnings`           | Newline-separated list of warnings emitted while converting, if any.        |
+| Output               | Description                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------- |
+| `package-list-path`   | Path to the generated package list (`to-list` mode only).                          |
+| `package-xml-path`    | Path to the generated `package.xml` (`to-xml` mode only).                          |
+| `types`               | Number of distinct metadata types processed.                                       |
+| `members`             | Number of members processed.                                                       |
+| `api-version`         | API version used in the generated `package.xml` (`to-xml` mode only; empty when omitted). |
+| `warnings`            | Newline-separated list of warnings emitted while converting, if any.               |
 
 ---
 

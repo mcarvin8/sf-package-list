@@ -1,10 +1,10 @@
-# Manual smoke test: exercises both Actions (to-list, to-xml) end to end on
-# real GitHub Actions infra using the repo's own test/samples fixtures.
+# Manual smoke test: exercises the Action end to end (both mode: to-list and
+# mode: to-xml) on real GitHub Actions infra using the repo's own
+# test/samples fixtures.
 #
 # Two sources, deliberately not the same:
-# - pull_request: uses `./to-list` and `./to-xml` (this checkout's actual
-#   action.yml/dist/action) - validates what's about to be merged before it
-#   ever reaches @v3.
+# - pull_request: uses `./` (this checkout's actual action.yml/dist/action) -
+#   validates what's about to be merged before it ever reaches @v3.
 # - workflow_dispatch: uses `@v3` (the live published tag) - an on-demand
 #   check that what's actually public still works, run manually post-release.
 name: Smoke test (published Action)
@@ -14,8 +14,7 @@ on:
   pull_request:
     paths:
       - '.github/workflows/smoke-test-action.yml'
-      - 'to-list/action.yml'
-      - 'to-xml/action.yml'
+      - 'action.yml'
       - 'dist/action/**'
       - 'src/action/**'
       - 'src/core/**'
@@ -35,8 +34,9 @@ jobs:
 
       - name: Convert package.xml to a list
         id: to-list
-        uses: ./to-list
+        uses: ./
         with:
+          mode: to-list
           package-xml: test/samples/package-basic.xml
           package-list: package.txt
 
@@ -59,8 +59,9 @@ jobs:
       - name: Convert package.xml to a list (expected to fail on an empty result)
         id: to-list
         continue-on-error: true
-        uses: ./to-list
+        uses: ./
         with:
+          mode: to-list
           package-xml: test/samples/package-no-types.xml
           package-list: package.txt
           fail-on-empty: 'true'
@@ -83,8 +84,9 @@ jobs:
 
       - name: Convert a list to package.xml
         id: to-xml
-        uses: ./to-xml
+        uses: ./
         with:
+          mode: to-xml
           package-list: test/samples/list-basic.txt
           package-xml: package.xml
 
@@ -108,8 +110,9 @@ jobs:
       - name: Convert a list to package.xml (expected to fail on an empty result)
         id: to-xml
         continue-on-error: true
-        uses: ./to-xml
+        uses: ./
         with:
+          mode: to-xml
           package-list: test/samples/invalid-list.txt
           package-xml: package.xml
           fail-on-empty: 'true'
@@ -130,6 +133,29 @@ jobs:
           fi
           echo "warnings: ${{ steps.to-xml.outputs.warnings }}"
 
+  invalid-mode-failure-path-local:
+    name: invalid mode failure path (local checkout)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Run with an invalid mode (expected to fail)
+        id: invalid-mode
+        continue-on-error: true
+        uses: ./
+        with:
+          mode: bogus
+
+      - name: Confirm the step actually failed
+        run: |
+          if [ "${{ steps.invalid-mode.outcome }}" != "failure" ]; then
+            echo "Expected the invalid-mode step to fail (outcome was '${{ steps.invalid-mode.outcome }}')."
+            exit 1
+          fi
+          echo "Confirmed: an invalid mode correctly failed the step."
+
   to-list-success-path-published:
     name: to-list success path (published @v3)
     if: github.event_name == 'workflow_dispatch'
@@ -140,8 +166,9 @@ jobs:
 
       - name: Convert package.xml to a list
         id: to-list
-        uses: mcarvin8/sf-package-list/to-list@v3
+        uses: mcarvin8/sf-package-list@v3
         with:
+          mode: to-list
           package-xml: test/samples/package-basic.xml
           package-list: package.txt
 
@@ -163,8 +190,9 @@ jobs:
 
       - name: Convert a list to package.xml
         id: to-xml
-        uses: mcarvin8/sf-package-list/to-xml@v3
+        uses: mcarvin8/sf-package-list@v3
         with:
+          mode: to-xml
           package-list: test/samples/list-basic.txt
           package-xml: package.xml
 
