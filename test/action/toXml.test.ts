@@ -3,14 +3,14 @@ import { readFile } from 'node:fs/promises';
 import * as core from '@actions/core';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import { run } from '../../../src/action/toXml/main.js';
-import { listToPackageXml } from '../../../src/core/listToPackageXml.js';
-import { parseManifestXml } from '../../../src/core/parseManifest.js';
+import { runToXml as run } from '../../src/action/toXml.js';
+import { listToPackageXml } from '../../src/core/listToPackageXml.js';
+import { parseManifestXml } from '../../src/core/parseManifest.js';
 
 vi.mock('@actions/core');
 vi.mock('node:fs/promises');
-vi.mock('../../../src/core/listToPackageXml.js');
-vi.mock('../../../src/core/parseManifest.js');
+vi.mock('../../src/core/listToPackageXml.js');
+vi.mock('../../src/core/parseManifest.js');
 
 const listToPackageXmlMock = listToPackageXml as unknown as Mock;
 const parseManifestXmlMock = parseManifestXml as unknown as Mock;

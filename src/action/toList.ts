@@ -4,8 +4,8 @@ import { readFile } from 'node:fs/promises';
 
 import * as core from '@actions/core';
 
-import { packageXmlToList } from '../../core/packageXmlToList.js';
-import { parseManifestXml } from '../../core/parseManifest.js';
+import { packageXmlToList } from '../core/packageXmlToList.js';
+import { parseManifestXml } from '../core/parseManifest.js';
 
 async function countTypesAndMembers(xmlPath: string): Promise<{ types: number; members: number }> {
   try {
@@ -20,7 +20,7 @@ async function countTypesAndMembers(xmlPath: string): Promise<{ types: number; m
   }
 }
 
-export async function run(): Promise<void> {
+export async function runToList(): Promise<void> {
   try {
     const xmlPath = core.getInput('package-xml') || undefined;
     const listPath = core.getInput('package-list') || 'package.txt';

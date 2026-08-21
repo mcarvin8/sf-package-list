@@ -1,0 +1,49 @@
+name: 'SF Package List'
+description: 'Convert Salesforce package.xml manifests to and from the plain-text list format.'
+author: 'Matt Carvin'
+branding:
+  icon: 'list'
+  color: 'blue'
+
+inputs:
+  mode:
+    description: >-
+      Conversion direction: 'to-list' converts a package.xml manifest into the plain-text list
+      format; 'to-xml' converts a package list back into a package.xml manifest.
+    required: true
+  package-xml:
+    description: >-
+      In 'to-list' mode: path to the source package.xml. In 'to-xml' mode: output path for the
+      generated package.xml (defaults to 'package.xml').
+    required: false
+  package-list:
+    description: >-
+      In 'to-list' mode: output path for the generated package list (defaults to 'package.txt').
+      In 'to-xml' mode: path to the source package list.
+    required: false
+  no-api-version:
+    description: 'Explicitly omit the API version from the generated output.'
+    required: false
+    default: 'false'
+  fail-on-empty:
+    description: 'Fail the action if the generated output has no types.'
+    required: false
+    default: 'false'
+
+outputs:
+  package-list-path:
+    description: 'Path to the generated package list (to-list mode only).'
+  package-xml-path:
+    description: 'Path to the generated package.xml (to-xml mode only).'
+  types:
+    description: 'Number of distinct metadata types processed.'
+  members:
+    description: 'Number of members processed.'
+  api-version:
+    description: 'API version used in the generated package.xml (to-xml mode only; empty when omitted).'
+  warnings:
+    description: 'Newline-separated list of warnings emitted while converting, if any.'
+
+runs:
+  using: 'node24'
+  main: 'dist/action/index.cjs'
