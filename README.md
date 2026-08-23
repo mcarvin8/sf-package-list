@@ -12,72 +12,6 @@ Convert Salesforce `package.xml` manifests to and from a human-readable list for
 
 ---
 
-## Requirements
-
-- Salesforce CLI (`sf`)
-- Node.js **22.19 or later**
-
----
-
-## Install
-
-```bash
-sf plugins install sf-package-list
-```
-
----
-
-## GitHub Action
-
-For GitHub Actions, this is also available as a native Action — no `sf` CLI or plugin install required. One action, two `mode`s:
-
-### `mode: to-list` — package.xml → list
-
-```yaml
-- name: Convert package.xml to a list
-  id: to-list
-  uses: mcarvin8/sf-package-list@v3
-  with:
-    mode: to-list
-    package-xml: package.xml
-    package-list: package.txt
-```
-
-### `mode: to-xml` — list → package.xml
-
-```yaml
-- name: Convert a list to package.xml
-  id: to-xml
-  uses: mcarvin8/sf-package-list@v3
-  with:
-    mode: to-xml
-    package-list: package.txt
-    package-xml: package.xml
-```
-
-### Inputs
-
-| Input             | Description                                                                                                     | Required | Default        |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------- | -------- | -------------- |
-| `mode`               | Conversion direction: `to-list` (package.xml → list) or `to-xml` (list → package.xml).                             | **Yes**  |                 |
-| `package-xml`        | `to-list`: source `package.xml`. `to-xml`: output path for the generated `package.xml`.                            | No       | `package.xml`   |
-| `package-list`       | `to-list`: output path for the generated package list. `to-xml`: source package list.                              | No       | `package.txt`   |
-| `no-api-version`     | Explicitly omit the API version from the generated output.                                                        | No       | `false`         |
-| `fail-on-empty`      | Fail the action if the generated output has no types.                                                             | No       | `false`         |
-
-### Outputs
-
-| Output               | Description                                                                       |
-| --------------------- | ------------------------------------------------------------------------------------- |
-| `package-list-path`   | Path to the generated package list (`to-list` mode only).                          |
-| `package-xml-path`    | Path to the generated `package.xml` (`to-xml` mode only).                          |
-| `types`               | Number of distinct metadata types processed.                                       |
-| `members`             | Number of members processed.                                                       |
-| `api-version`         | API version used in the generated `package.xml` (`to-xml` mode only; empty when omitted). |
-| `warnings`            | Newline-separated list of warnings emitted while converting, if any.               |
-
----
-
 ## List Format
 
 Each metadata type gets one line: `TypeName: member1, member2, ...`
@@ -131,9 +65,22 @@ Version: 59.0
 
 ---
 
-## Commands
+## Salesforce CLI
 
-### `sf sfpl list`
+### Requirements
+
+- Salesforce CLI (`sf`)
+- Node.js **22.19 or later**
+
+### Install
+
+```bash
+sf plugins install sf-package-list
+```
+
+### Commands
+
+#### `sf sfpl list`
 
 > package.xml → list
 
@@ -147,7 +94,7 @@ sf sfpl list -x <package.xml> [-l <output.txt>] [-n]
 | `--package-list`   | `-l`  | `package.txt` | Output path for the list file    |
 | `--no-api-version` | `-n`  | `false`       | Omit API version from output     |
 
-### `sf sfpl xml`
+#### `sf sfpl xml`
 
 > list → package.xml
 
@@ -160,6 +107,57 @@ sf sfpl xml -l <list.txt> [-x <package.xml>] [-n]
 | `--package-list`   | `-l`  | —             | Path to the source list file                |
 | `--package-xml`    | `-x`  | `package.xml` | Output path for the generated `package.xml` |
 | `--no-api-version` | `-n`  | `false`       | Omit API version from output                |
+
+---
+
+## GitHub Action
+
+For GitHub Actions, this is also available as a native Action — no `sf` CLI or plugin install required. One action, two `mode`s:
+
+### `mode: to-list` — package.xml → list
+
+```yaml
+- name: Convert package.xml to a list
+  id: to-list
+  uses: mcarvin8/sf-package-list@v3
+  with:
+    mode: to-list
+    package-xml: package.xml
+    package-list: package.txt
+```
+
+### `mode: to-xml` — list → package.xml
+
+```yaml
+- name: Convert a list to package.xml
+  id: to-xml
+  uses: mcarvin8/sf-package-list@v3
+  with:
+    mode: to-xml
+    package-list: package.txt
+    package-xml: package.xml
+```
+
+### Inputs
+
+| Input             | Description                                                                                                     | Required | Default        |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------- | -------- | -------------- |
+| `mode`               | Conversion direction: `to-list` (package.xml → list) or `to-xml` (list → package.xml).                             | **Yes**  |                 |
+| `package-xml`        | `to-list`: source `package.xml`. `to-xml`: output path for the generated `package.xml`.                            | No       | `package.xml`   |
+| `package-list`       | `to-list`: output path for the generated package list. `to-xml`: source package list.                              | No       | `package.txt`   |
+| `no-api-version`     | Explicitly omit the API version from the generated output.                                                        | No       | `false`         |
+| `fail-on-empty`      | Fail the action if the generated output has no types.                                                             | No       | `false`         |
+
+### Outputs
+
+| Output               | Description                                                                       |
+| --------------------- | ------------------------------------------------------------------------------------- |
+| `package-list-path`   | Path to the generated package list (`to-list` mode only).                          |
+| `package-xml-path`    | Path to the generated `package.xml` (`to-xml` mode only).                          |
+| `types`               | Number of distinct metadata types processed.                                       |
+| `members`             | Number of members processed.                                                       |
+| `api-version`         | API version used in the generated `package.xml` (`to-xml` mode only; empty when omitted). |
+| `warnings`            | Newline-separated list of warnings emitted while converting, if any.               |
 
 ---
 
@@ -349,7 +347,7 @@ Manifests and list files are parsed in-house and checked only against *structure
 
 **Invalid list lines** — Each malformed line is skipped with a warning. Valid lines still produce output.
 
-The plugin never throws on bad input—it warns and continues.
+sf-package-list never throws on bad input—it warns and continues.
 
 ---
 
