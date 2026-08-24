@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.1](https://github.com/mcarvin8/sf-package-list/compare/v3.1.0...v3.1.1) (2026-08-24)
+
+
+### Bug Fixes
+
+* **parser:** flatten xmlParser closures into class methods ([#104](https://github.com/mcarvin8/sf-package-list/issues/104)) ([ee19bd6](https://github.com/mcarvin8/sf-package-list/commit/ee19bd6359baab0e493b7e7e2cf9638570557c04))
+
 ## [3.1.0](https://github.com/mcarvin8/sf-package-list/compare/v3.0.1...v3.1.0) (2026-08-21)
 
 
