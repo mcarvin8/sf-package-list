@@ -80,33 +80,70 @@ sf plugins install sf-package-list
 
 ### Commands
 
-#### `sf sfpl list`
+<!-- commands -->
+* [`sf sfpl list`](#sf-sfpl-list)
+* [`sf sfpl xml`](#sf-sfpl-xml)
 
-> package.xml → list
+## `sf sfpl list`
 
-```bash
-sf sfpl list -x <package.xml> [-l <output.txt>] [-n]
+Convert a Salesforce package into list format.
+
+```
+USAGE
+  $ sf sfpl list [--json] [--flags-dir <value>] [-x <value>] [-l <value>] [-n]
+
+FLAGS
+  -l, --package-list=<value>  [default: package.txt] Output path to save the package list to.
+  -n, --no-api-version        Intentionally omit the API version in the package list.
+  -x, --package-xml=<value>   Path to the package.xml to convert to list format.
+
+GLOBAL FLAGS
+  --flags-dir=<value>  Import flag values from a directory.
+  --json               Format output as json.
+
+DESCRIPTION
+  Convert a Salesforce package into list format.
+
+  Read a package.xml file and convert it to list format.
+
+EXAMPLES
+  $ sf sfpl list -x package.xml
+
+  $ sf sfpl list -x package.xml -n
 ```
 
-| Flag               | Short | Default       | Description                      |
-| ------------------ | ----- | ------------- | -------------------------------- |
-| `--package-xml`    | `-x`  | —             | Path to the source `package.xml` |
-| `--package-list`   | `-l`  | `package.txt` | Output path for the list file    |
-| `--no-api-version` | `-n`  | `false`       | Omit API version from output     |
+_See code: [src/commands/sfpl/list.ts](https://github.com/mcarvin8/sf-package-list/blob/v3.1.1/src/commands/sfpl/list.ts)_
 
-#### `sf sfpl xml`
+## `sf sfpl xml`
 
-> list → package.xml
+Convert a Salesforce package list back into a XML.
 
-```bash
-sf sfpl xml -l <list.txt> [-x <package.xml>] [-n]
+```
+USAGE
+  $ sf sfpl xml [--json] [--flags-dir <value>] [-x <value>] [-l <value>] [-n]
+
+FLAGS
+  -l, --package-list=<value>  Text file containing the package list to convert into an XML.
+  -n, --no-api-version        Intentionally omit the API version in the package.xml.
+  -x, --package-xml=<value>   [default: package.xml] Path to the package.xml to create.
+
+GLOBAL FLAGS
+  --flags-dir=<value>  Import flag values from a directory.
+  --json               Format output as json.
+
+DESCRIPTION
+  Convert a Salesforce package list back into a XML.
+
+  Convert the package list back into a package.xml.
+
+EXAMPLES
+  $ sf sfpl xml -l list.txt -x package.xml
+
+  $ sf sfpl xml -l list.txt -x package.xml -n
 ```
 
-| Flag               | Short | Default       | Description                                 |
-| ------------------ | ----- | ------------- | ------------------------------------------- |
-| `--package-list`   | `-l`  | —             | Path to the source list file                |
-| `--package-xml`    | `-x`  | `package.xml` | Output path for the generated `package.xml` |
-| `--no-api-version` | `-n`  | `false`       | Omit API version from output                |
+_See code: [src/commands/sfpl/xml.ts](https://github.com/mcarvin8/sf-package-list/blob/v3.1.1/src/commands/sfpl/xml.ts)_
+<!-- commandsstop -->
 
 ---
 

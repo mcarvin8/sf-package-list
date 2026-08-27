@@ -83,6 +83,7 @@
     "postpack": "shx rm -f oclif.manifest.json oclif.lock",
     "prepack": "wireit",
     "prepare": "husky",
+    "readme": "wireit",
     "test": "wireit",
     "test:mutation": "wireit",
     "test:mutation:incremental": "wireit",
@@ -199,11 +200,32 @@
     },
     "prepack": {
       "command": "oclif manifest && oclif readme",
+      "env": {
+        "COLUMNS": "120"
+      },
       "files": [
         "src/commands/sfpl/list.ts",
         "src/commands/sfpl/xml.ts",
         "messages/sfpl.list.md",
         "messages/sfpl.xml.md",
+        "README.md"
+      ],
+      "dependencies": [
+        "build"
+      ],
+      "output": [
+        "README.md"
+      ],
+      "clean": false
+    },
+    "readme": {
+      "command": "oclif readme",
+      "env": {
+        "COLUMNS": "120"
+      },
+      "files": [
+        "src/commands/**/*.ts",
+        "messages/**/*.md",
         "README.md"
       ],
       "dependencies": [

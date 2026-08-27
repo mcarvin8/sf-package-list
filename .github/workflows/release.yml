@@ -115,6 +115,17 @@ jobs:
           NODE_AUTH_TOKEN="" npm publish --access public --tag latest --provenance
           echo "published=true" >> "$GITHUB_OUTPUT"
 
+      # `npm publish` runs the `prepack` script (oclif manifest && oclif readme),
+      # which regenerates README.md's Command Reference against the version
+      # release-please just bumped. Push that back to main so the repo's README
+      # never drifts from what was just published.
+      - name: Commit regenerated README
+        if: steps.publish.outputs.published == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "docs: regenerate command reference [skip ci]"
+          file_pattern: README.md          
+
       # Moves a floating major-version tag (e.g. v3) to the release commit so
       # GitHub Action consumers can pin `uses: mcarvin8/sf-package-list@v3`
       # instead of an exact patch version.
