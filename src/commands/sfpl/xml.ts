@@ -1,4 +1,4 @@
-import { Messages } from '@salesforce/core';
+import { Messages, SfError } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 
 import { listToPackageXml } from '../../core/listToPackageXml.js';
@@ -31,6 +31,10 @@ export default class SfplXml extends SfCommand<SfPackageXmlResult> {
       required: false,
       default: false,
     }),
+    'fail-on-empty': Flags.boolean({
+      summary: messages.getMessage('flags.fail-on-empty.summary'),
+      default: false,
+    }),
   };
 
   public async run(): Promise<SfPackageXmlResult> {
@@ -44,6 +48,11 @@ export default class SfplXml extends SfCommand<SfPackageXmlResult> {
 
     result.warnings.forEach((w) => this.warn(w));
     this.log(`The package XML has been written to ${result.xmlPath}`);
+
+    if (flags['fail-on-empty'] && result.types === 0) {
+      throw new SfError('The generated package.xml has no <types> -- the provided package list was invalid or empty.');
+    }
+
     return { path: result.xmlPath };
   }
 }
