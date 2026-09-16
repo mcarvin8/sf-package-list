@@ -11,9 +11,10 @@ export async function listToPackageXml({
   listPath?: string;
   xmlPath: string;
   noApiVersion: boolean;
-}): Promise<{ xmlPath: string; warnings: string[] }> {
+}): Promise<{ xmlPath: string; warnings: string[]; types: number }> {
   const warnings: string[] = [];
   let xmlString: string;
+  let types = 0;
 
   let listString: string | undefined;
   if (listPath) {
@@ -29,13 +30,14 @@ export async function listToPackageXml({
   if (listString) {
     const lines = listString.split('\n');
     const packageJson = parseListLines(lines, noApiVersion, warnings);
+    types = packageJson.Package.types.length;
     xmlString = buildXmlString(packageJson);
   } else {
     xmlString = generateEmptyPackageXml();
   }
 
   await writeFile(xmlPath, xmlString);
-  return { xmlPath, warnings };
+  return { xmlPath, warnings, types };
 }
 
 function buildXmlString(packageJson: PackageManifestObject): string {

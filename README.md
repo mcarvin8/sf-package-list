@@ -90,12 +90,14 @@ Convert a Salesforce package into list format.
 
 ```
 USAGE
-  $ sf sfpl list [--json] [--flags-dir <value>] [-x <value>] [-l <value>] [-n]
+  $ sf sfpl list [--json] [--flags-dir <value>] [-x <value>] [-l <value>] [-n] [--fail-on-empty]
 
 FLAGS
   -l, --package-list=<value>  [default: package.txt] Output path to save the package list to.
   -n, --no-api-version        Intentionally omit the API version in the package list.
   -x, --package-xml=<value>   Path to the package.xml to convert to list format.
+      --fail-on-empty         Fail the command if the package list is empty (e.g. the input package.xml was invalid,
+                              missing, or empty).
 
 GLOBAL FLAGS
   --flags-dir=<value>  Import flag values from a directory.
@@ -110,6 +112,8 @@ EXAMPLES
   $ sf sfpl list -x package.xml
 
   $ sf sfpl list -x package.xml -n
+
+  $ sf sfpl list -x package.xml --fail-on-empty
 ```
 
 _See code: [src/commands/sfpl/list.ts](https://github.com/mcarvin8/sf-package-list/blob/v3.1.1/src/commands/sfpl/list.ts)_
@@ -120,12 +124,14 @@ Convert a Salesforce package list back into a XML.
 
 ```
 USAGE
-  $ sf sfpl xml [--json] [--flags-dir <value>] [-x <value>] [-l <value>] [-n]
+  $ sf sfpl xml [--json] [--flags-dir <value>] [-x <value>] [-l <value>] [-n] [--fail-on-empty]
 
 FLAGS
   -l, --package-list=<value>  Text file containing the package list to convert into an XML.
   -n, --no-api-version        Intentionally omit the API version in the package.xml.
   -x, --package-xml=<value>   [default: package.xml] Path to the package.xml to create.
+      --fail-on-empty         Fail the command if the generated package.xml has no <types> (e.g. the input package list
+                              was invalid or empty).
 
 GLOBAL FLAGS
   --flags-dir=<value>  Import flag values from a directory.
@@ -140,6 +146,8 @@ EXAMPLES
   $ sf sfpl xml -l list.txt -x package.xml
 
   $ sf sfpl xml -l list.txt -x package.xml -n
+
+  $ sf sfpl xml -l list.txt -x package.xml --fail-on-empty
 ```
 
 _See code: [src/commands/sfpl/xml.ts](https://github.com/mcarvin8/sf-package-list/blob/v3.1.1/src/commands/sfpl/xml.ts)_

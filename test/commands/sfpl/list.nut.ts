@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-describe('sfpc combine NUTs', () => {
+describe('sfpl NUTs', () => {
   let session: TestSession;
   const package1 = resolve('test/samples/package-basic.xml');
   const list1 = resolve('test/samples/list-basic.txt');
@@ -79,5 +79,27 @@ describe('sfpc combine NUTs', () => {
     const actualOutput = await readFile(outputXml, 'utf-8');
     expect(output.trim()).toEqual('The package XML has been written to package.xml');
     strictEqual(actualOutput, expectedOutput, `Mismatch between ${package3} and ${outputXml}`);
+  });
+  it('sfpl list --fail-on-empty exits non-zero when the package list is empty.', () => {
+    const command = `sfpl list --fail-on-empty`;
+    const output = execCmd(command, { ensureExitCode: 1 }).shellOutput.stderr;
+    expect(output).toContain('The package list is empty -- the provided package.xml was invalid, missing, or empty.');
+  });
+  it('sfpl list --fail-on-empty does not fail when the package list has content.', () => {
+    const command = `sfpl list -x ${package1} --fail-on-empty`;
+    const output = execCmd(command, { ensureExitCode: 0 }).shellOutput.stdout;
+    expect(output.trim()).toEqual('CustomObject: ABC');
+  });
+  it('sfpl xml --fail-on-empty exits non-zero when the package.xml has no types.', () => {
+    const command = `sfpl xml --fail-on-empty`;
+    const output = execCmd(command, { ensureExitCode: 1 }).shellOutput.stderr;
+    expect(output).toContain(
+      'The generated package.xml has no <types> -- the provided package list was invalid or empty.',
+    );
+  });
+  it('sfpl xml --fail-on-empty does not fail when the package.xml has types.', () => {
+    const command = `sfpl xml -l ${list1} --fail-on-empty`;
+    const output = execCmd(command, { ensureExitCode: 0 }).shellOutput.stdout;
+    expect(output.trim()).toEqual('The package XML has been written to package.xml');
   });
 });

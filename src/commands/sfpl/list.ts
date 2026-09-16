@@ -1,4 +1,4 @@
-import { Messages } from '@salesforce/core';
+import { Messages, SfError } from '@salesforce/core';
 import { Flags, SfCommand } from '@salesforce/sf-plugins-core';
 
 import { packageXmlToList } from '../../core/packageXmlToList.js';
@@ -31,6 +31,10 @@ export default class SfplList extends SfCommand<SfPackageListResult> {
       required: false,
       default: false,
     }),
+    'fail-on-empty': Flags.boolean({
+      summary: messages.getMessage('flags.fail-on-empty.summary'),
+      default: false,
+    }),
   };
 
   public async run(): Promise<SfPackageListResult> {
@@ -44,6 +48,11 @@ export default class SfplList extends SfCommand<SfPackageListResult> {
 
     result.warnings.forEach((w) => this.warn(w));
     this.log(result.packageList);
+
+    if (flags['fail-on-empty'] && result.packageList === '') {
+      throw new SfError('The package list is empty -- the provided package.xml was invalid, missing, or empty.');
+    }
+
     return { list: result.packageList };
   }
 }

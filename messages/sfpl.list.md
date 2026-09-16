@@ -10,6 +10,7 @@ Read a package.xml file and convert it to list format.
 
 - sf sfpl list -x package.xml
 - sf sfpl list -x package.xml -n
+- sf sfpl list -x package.xml --fail-on-empty
 
 # flags.package-xml.summary
 
@@ -22,3 +23,7 @@ Output path to save the package list to.
 # flags.no-api-version.summary
 
 Intentionally omit the API version in the package list.
+
+# flags.fail-on-empty.summary
+
+Fail the command if the package list is empty (e.g. the input package.xml was invalid, missing, or empty).
