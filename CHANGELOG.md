@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.0](https://github.com/mcarvin8/sf-package-list/compare/v3.1.1...v3.2.0) (2026-09-16)
+
+
+### Features
+
+* **cli:** add --fail-on-empty flag to sfpl list and sfpl xml ([#106](https://github.com/mcarvin8/sf-package-list/issues/106)) ([b2f76e6](https://github.com/mcarvin8/sf-package-list/commit/b2f76e6cd708f086169e1fff6a081169172be512))
+
 ## [3.1.1](https://github.com/mcarvin8/sf-package-list/compare/v3.1.0...v3.1.1) (2026-08-24)
 
 
