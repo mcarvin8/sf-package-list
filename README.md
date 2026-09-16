@@ -116,7 +116,7 @@ EXAMPLES
   $ sf sfpl list -x package.xml --fail-on-empty
 ```
 
-_See code: [src/commands/sfpl/list.ts](https://github.com/mcarvin8/sf-package-list/blob/v3.1.1/src/commands/sfpl/list.ts)_
+_See code: [src/commands/sfpl/list.ts](https://github.com/mcarvin8/sf-package-list/blob/v3.2.0/src/commands/sfpl/list.ts)_
 
 ## `sf sfpl xml`
 
@@ -150,7 +150,7 @@ EXAMPLES
   $ sf sfpl xml -l list.txt -x package.xml --fail-on-empty
 ```
 
-_See code: [src/commands/sfpl/xml.ts](https://github.com/mcarvin8/sf-package-list/blob/v3.1.1/src/commands/sfpl/xml.ts)_
+_See code: [src/commands/sfpl/xml.ts](https://github.com/mcarvin8/sf-package-list/blob/v3.2.0/src/commands/sfpl/xml.ts)_
 <!-- commandsstop -->
 
 ---
