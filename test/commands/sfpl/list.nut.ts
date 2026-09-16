@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import { execCmd, TestSession } from '@salesforce/cli-plugins-testkit';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-describe('sfpc combine NUTs', () => {
+describe('sfpl NUTs', () => {
   let session: TestSession;
   const package1 = resolve('test/samples/package-basic.xml');
   const list1 = resolve('test/samples/list-basic.txt');

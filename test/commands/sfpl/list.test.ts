@@ -13,7 +13,7 @@ vi.mock('node:fs/promises', async (importOriginal) => {
   return { ...actual, readFile: vi.fn(actual.readFile) };
 });
 
-describe('sfpc combine', () => {
+describe('sfpl list/xml', () => {
   const package1 = resolve('test/samples/package-basic.xml');
   const list1 = resolve('test/samples/list-basic.txt');
   const package2 = resolve('test/samples/package-with-api-version.xml');
