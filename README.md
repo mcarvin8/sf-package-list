@@ -391,7 +391,7 @@ Manifests and list files are parsed in-house and checked only against *structure
 
 **Invalid list lines** — Each malformed line is skipped with a warning. Valid lines still produce output.
 
-sf-package-list never throws on bad input—it warns and continues.
+sf-package-list never throws on bad input by default—it warns and continues. If you would like the plugin to throw an error to catch, supply the `fail-on-empty` flag or action input so the plugin returns an error when the generated output is empty (i.e. no metadata types).
 
 ---
 
