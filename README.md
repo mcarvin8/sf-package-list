@@ -189,7 +189,7 @@ For GitHub Actions, this is also available as a native Action — no `sf` CLI or
 | `mode`               | Conversion direction: `to-list` (package.xml → list) or `to-xml` (list → package.xml).                             | **Yes**  |                 |
 | `package-xml`        | `to-list`: source `package.xml`. `to-xml`: output path for the generated `package.xml`.                            | No       | `package.xml`   |
 | `package-list`       | `to-list`: output path for the generated package list. `to-xml`: source package list.                              | No       | `package.txt`   |
-| `no-api-version` | Omit `<version>` from the generated package output so Salesforce CLI can apply its [source API version precedence](https://developer.salesforce.com/docs/platform/sfdx-setup/guide/sfdx-setup-apiversion.html#sourceapiversion-order-of-precedence). | No | `false` |
+| `no-api-version` | Omit the API version from the generated package output so Salesforce CLI can apply its [source API version precedence](https://developer.salesforce.com/docs/platform/sfdx-setup/guide/sfdx-setup-apiversion.html#sourceapiversion-order-of-precedence). | No | `false` |
 | `fail-on-empty`      | Fail the action if the generated output has no types.                                                             | No       | `false`         |
 
 ### Outputs
