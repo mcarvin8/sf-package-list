@@ -328,7 +328,7 @@ jobs:
         run: sf project deploy start -x package.xml --post-destructive-changes destructiveChanges.xml -o ci-org
 ```
 
-Because the destructive scope comes only from the typed `workflow_dispatch` input, the deployment is limited to exactly the components an approver declared—nothing picked up implicitly from a branch diff or working directory.
+GitLab can use the same model: an admin launches a manual pipeline from the web UI, enters the package list as 1 multi-line input variable, and the pipeline converts that input to `destructiveChanges.xml` at runtime. The destruction scope comes only from the approved input, so the deployment is limited to exactly the components an approver declared—nothing picked up implicitly from a branch diff, working directory, or committed manifest.
 
 ### Pipeline-Driven Metadata Selection
 
