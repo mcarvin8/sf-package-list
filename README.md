@@ -15,6 +15,8 @@ Convert Salesforce `package.xml` manifests to and from a human-readable list for
 
 Each metadata type gets one line: `TypeName: member1, member2, ...`
 
+Optionally, API version gets exactly one line: `Version: 59.0`
+
 ```
 CustomLabel: Always_Be_Closing, Attention_Interest_Decision_Action, Leads_Are_Gold
 CustomObject: ABC, Glengarry, Mitch_And_Murray
@@ -228,7 +230,7 @@ This provides a human-readable deployment summary without requiring reviewers to
 [`sfdx-git-delta`](https://github.com/scolladon/sfdx-git-delta) generates a `package.xml`/`destructiveChanges.xml` from a git diff. Convert the generated `package.xml` to list format and print it to the job log so reviewers can see exactly what will deploy before the deploy step runs:
 
 ```yaml
-name: deploy
+name: Deployment
 
 on:
   push:
@@ -284,7 +286,7 @@ This approach makes destructive changes easier to review and approve, without re
 Accept the list of components to delete as a manual text input, restricting the destructive deployment to exactly what an approver typed in—no free-form XML editing required and no dependency on a checked-in file:
 
 ```yaml
-name: destructive-deploy
+name: Destructive Deployment
 
 on:
   workflow_dispatch:
@@ -318,7 +320,7 @@ jobs:
       - name: Convert list to destructiveChanges.xml
         run: sf sfpl xml -l destructive.txt -x destructiveChanges.xml -n
 
-      - name: Write empty package.xml
+      - name: Write empty package.xml required for a standalone destructive deployment
         run: sf sfpl xml -x package.xml -n
 
       - name: Authenticate to Salesforce
@@ -347,15 +349,13 @@ and then converted to `package.xml` only when needed.
 
 Use package lists as lightweight deployment manifests that can be reviewed by administrators, release managers, and auditors.
 
-The format is intentionally simple enough for non-developers to verify:
+The format is intentionally simple enough for non-developers to verify without needing Salesforce metadata XML knowledge:
 
 ```text
 CustomLabel: Feature_Flag_X
 PermissionSet: Sales_User
 Flow: Lead_Routing
 ```
-
-without needing Salesforce metadata XML knowledge.
 
 ### Metadata-as-Data Automation
 
