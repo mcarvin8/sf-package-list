@@ -275,13 +275,13 @@ The `package.txt` printed in the log becomes a quick, reviewable manifest of the
 
 Use a package list as a restricted allowlist of metadata to remove.
 
-Teams can maintain destructive changes in source control as a simple text file, review them during change approval, convert them to `destructiveChanges.xml` during pipeline execution, and deploy only the explicitly declared components.
+For destructive deployments that should not depend on a committed file or a standard push-triggered pipeline, let an authorized admin supply the package list at runtime through a GitHub Actions `workflow_dispatch` input or a GitLab web-based pipeline form. The pipeline can then convert that approved input into `destructiveChanges.xml` during execution and deploy only the explicitly declared components.
 
-This approach helps reduce the risk of accidentally deleting metadata that was not intended to be included in a destructive deployment.
+This approach makes destructive changes easier to review and approve, without requiring a raw deletion manifest to live in version control. It also reduces the risk of deleting metadata that was not intentionally approved for removal.
 
-**Example: `workflow_dispatch` input (package list) → `destructiveChanges.xml`**
+**Example: manual pipeline input (GitHub `workflow_dispatch` or GitLab web form) → `destructiveChanges.xml`**
 
-Accept the list of components to delete as a manual `workflow_dispatch` text input, restricting the destructive deployment to exactly what an approver typed in—no free-form XML editing required:
+Accept the list of components to delete as a manual text input, restricting the destructive deployment to exactly what an approver typed in—no free-form XML editing required and no dependency on a checked-in file:
 
 ```yaml
 name: destructive-deploy
