@@ -7,8 +7,20 @@
     "related": false
   },
   "coverageAnalysis": "perTest",
-  "mutate": ["src/**/*.ts", "!src/**/*.d.ts", "!src/index.ts", "!src/commands/**/*.ts", "!src/core/types.ts"],
-  "reporters": ["html", "json", "clear-text", "progress", "dashboard"],
+  "mutate": [
+    "src/**/*.ts",
+    "!src/**/*.d.ts",
+    "!src/index.ts",
+    "!src/commands/**/*.ts",
+    "!src/core/types.ts"
+  ],
+  "reporters": [
+    "html",
+    "json",
+    "clear-text",
+    "progress",
+    "dashboard"
+  ],
   "htmlReporter": {
     "fileName": "reports/mutation/index.html"
   },
@@ -32,7 +44,13 @@
     "break": null
   },
   "logLevel": "info",
-  "fileLogLevel": "trace",
+  "fileLogLevel": "info",
   "checkers": [],
-  "ignorePatterns": ["lib", "coverage", "test/**/*.nut.ts", ".stryker-tmp", "reports"]
+  "ignorePatterns": [
+    "lib",
+    "coverage",
+    "test/**/*.nut.ts",
+    ".stryker-tmp",
+    "reports"
+  ]
 }
