@@ -64,6 +64,10 @@ function parseListLines(lines: string[], noApiVersion: boolean, warnings: string
     },
   };
 
+  // Repeated type lines merge into one <types> entry. Map and Set keep first-appearance
+  // order for types and members, so lists without duplicates convert exactly as before.
+  const membersByType = new Map<string, Set<string>>();
+
   for (const line of lines) {
     const trimmedLine = line.trim();
     if (!trimmedLine) continue;
@@ -83,13 +87,23 @@ function parseListLines(lines: string[], noApiVersion: boolean, warnings: string
       continue;
     }
 
-    packageJson.Package.types.push({
-      members: values
-        .split(',')
-        .map((s) => s.trim())
-        .filter(Boolean),
-      name: key,
-    });
+    const members = values
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    if (members.length === 0) {
+      warnings.push(`Line has no members and will be skipped: ${line}`);
+      continue;
+    }
+
+    const existing = membersByType.get(key) ?? new Set<string>();
+    members.forEach((member) => existing.add(member));
+    membersByType.set(key, existing);
+  }
+
+  for (const [name, members] of membersByType) {
+    packageJson.Package.types.push({ members: [...members], name });
   }
 
   return packageJson;

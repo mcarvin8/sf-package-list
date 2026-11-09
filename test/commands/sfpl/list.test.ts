@@ -231,6 +231,70 @@ CustomObject: ABC
     }
   });
 
+  it('should merge repeated type lines and drop duplicate members in first-appearance order', async () => {
+    const listPath = join(tmpdir(), `sf-package-list-test-merge-${randomUUID()}.txt`);
+    try {
+      await writeFile(listPath, 'ApexClass: B, A\nCustomObject: ABC\nApexClass: A, C\nApexClass: B\n');
+      const {
+        warnings,
+        types,
+        xmlPath: outPath,
+      } = await listToPackageXml({
+        listPath,
+        xmlPath: outputXml,
+        noApiVersion: true,
+      });
+      expect(warnings).toEqual([]);
+      expect(types).toBe(2);
+      const actualOutput = await readFile(outPath, 'utf-8');
+      expect(actualOutput.match(/<name>ApexClass<\/name>/g)).toHaveLength(1);
+      expect(actualOutput).toContain(
+        '<types>\n        <members>B</members>\n        <members>A</members>\n        <members>C</members>\n        <name>ApexClass</name>\n    </types>\n    <types>\n        <members>ABC</members>\n        <name>CustomObject</name>\n    </types>',
+      );
+    } finally {
+      await unlink(listPath).catch(() => {});
+    }
+  });
+  it('should warn and skip type lines with no members', async () => {
+    const listPath = join(tmpdir(), `sf-package-list-test-no-members-${randomUUID()}.txt`);
+    try {
+      await writeFile(listPath, 'ApexClass:\nCustomObject: , ,\n');
+      const {
+        warnings,
+        types,
+        xmlPath: outPath,
+      } = await listToPackageXml({
+        listPath,
+        xmlPath: outputXml,
+        noApiVersion: true,
+      });
+      expect(warnings).toEqual([
+        'Line has no members and will be skipped: ApexClass:',
+        'Line has no members and will be skipped: CustomObject: , ,',
+      ]);
+      expect(types).toBe(0);
+      const actualOutput = await readFile(outPath, 'utf-8');
+      expect(actualOutput).not.toContain('<types>');
+    } finally {
+      await unlink(listPath).catch(() => {});
+    }
+  });
+  it('should keep a type whose members appear on a later line after an empty line for it', async () => {
+    const listPath = join(tmpdir(), `sf-package-list-test-empty-then-members-${randomUUID()}.txt`);
+    try {
+      await writeFile(listPath, 'ApexClass:\nApexClass: A\n');
+      const { warnings, types } = await listToPackageXml({
+        listPath,
+        xmlPath: outputXml,
+        noApiVersion: true,
+      });
+      expect(warnings).toEqual(['Line has no members and will be skipped: ApexClass:']);
+      expect(types).toBe(1);
+    } finally {
+      await unlink(listPath).catch(() => {});
+    }
+  });
+
   it('should warn and write empty list when no xmlPath is provided', async () => {
     const listPath = join(tmpdir(), `sf-package-list-test-no-xmlpath-${randomUUID()}.txt`);
     try {
