@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.1](https://github.com/mcarvin8/sf-package-list/compare/v3.2.0...v3.2.1) (2026-11-09)
+
+
+### Bug Fixes
+
+* **xml:** merge repeated list types and skip empty type lines ([#108](https://github.com/mcarvin8/sf-package-list/issues/108)) ([ca345f6](https://github.com/mcarvin8/sf-package-list/commit/ca345f63ddb60a32cf31424aec180c18bffcfb38))
+
 ## [3.2.0](https://github.com/mcarvin8/sf-package-list/compare/v3.1.1...v3.2.0) (2026-09-16)
 
 
