@@ -7,10 +7,8 @@ export type ConvertXmlToListResult = {
   warnings: string[];
 };
 
-type XmlToListOutcome =
-  | { ok: true; packageList: string }
-  | { ok: false; reason: 'empty' }
-  | { ok: false; reason: 'invalid'; message: string };
+// An invalid manifest yields `error`; a valid one with no types yields an empty `packageList`.
+type XmlToListOutcome = { packageList: string; error?: undefined } | { error: string };
 
 /**
  * Converts package.xml text to package list text, in memory. An invalid
@@ -22,14 +20,16 @@ export function convertXmlToList(
   { noApiVersion = false }: { noApiVersion?: boolean } = {},
 ): ConvertXmlToListResult {
   const outcome = xmlToList(xml, noApiVersion);
-  if (outcome.ok) {
-    return { packageList: outcome.packageList, warnings: [] };
+  if (outcome.error !== undefined) {
+    return {
+      packageList: '',
+      warnings: [`The provided package is invalid. Returning an empty list. ${outcome.error}`],
+    };
   }
-  const warning =
-    outcome.reason === 'empty'
-      ? 'The provided package has no components. Returning an empty list.'
-      : `The provided package is invalid. Returning an empty list. ${outcome.message}`;
-  return { packageList: '', warnings: [warning] };
+  if (outcome.packageList === '') {
+    return { packageList: '', warnings: ['The provided package has no components. Returning an empty list.'] };
+  }
+  return { packageList: outcome.packageList, warnings: [] };
 }
 
 export async function packageXmlToList({
@@ -51,17 +51,15 @@ export async function packageXmlToList({
     try {
       outcome = xmlToList(await readFile(xmlPath, 'utf-8'), noApiVersion);
     } catch (err) {
-      outcome = { ok: false, reason: 'invalid', message: errorMessage(err) };
+      outcome = { error: errorMessage(err) };
     }
 
-    if (outcome.ok) {
-      packageList = outcome.packageList;
-    } else if (outcome.reason === 'empty') {
+    if (outcome.error !== undefined) {
+      warnings.push(`The provided package is invalid or could not be read. Creating empty list file. ${outcome.error}`);
+    } else if (outcome.packageList === '') {
       warnings.push('The provided package is invalid or has no components. Creating empty list file.');
     } else {
-      warnings.push(
-        `The provided package is invalid or could not be read. Creating empty list file. ${outcome.message}`,
-      );
+      packageList = outcome.packageList;
     }
   }
 
@@ -74,12 +72,13 @@ function xmlToList(xml: string, noApiVersion: boolean): XmlToListOutcome {
   try {
     manifest = parseManifestXml(xml);
   } catch (err) {
-    return { ok: false, reason: 'invalid', message: errorMessage(err) };
+    return { error: errorMessage(err) };
   }
+  // A manifest with a <version> but no types would otherwise build a "Version: x" line.
   if (manifest.types.length === 0) {
-    return { ok: false, reason: 'empty' };
+    return { packageList: '' };
   }
-  return { ok: true, packageList: buildPackageList(manifest, noApiVersion) };
+  return { packageList: buildPackageList(manifest, noApiVersion) };
 }
 
 function errorMessage(err: unknown): string {
