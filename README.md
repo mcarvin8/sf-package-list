@@ -207,6 +207,47 @@ For GitHub Actions, this is also available as a native Action — no `sf` CLI or
 
 ---
 
+## Programmatic API
+
+The conversion functions are also exported for use from Node.js scripts:
+
+```bash
+npm install sf-package-list
+```
+
+```typescript
+import { listToPackageXml, packageXmlToList, parseManifestXml } from 'sf-package-list';
+
+// list → package.xml
+const { xmlPath, warnings, types } = await listToPackageXml({
+  listPath: 'package.txt',
+  xmlPath: 'package.xml',
+  noApiVersion: false,
+});
+
+// package.xml → list
+const { packageList } = await packageXmlToList({
+  xmlPath: 'package.xml',
+  listPath: 'package.txt',
+  noApiVersion: false,
+});
+
+// parse a package.xml string without touching the filesystem
+const { types: parsed, version } = parseManifestXml(xmlString);
+```
+
+| Export               | Description                                                                                                  |
+| -------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `listToPackageXml`   | Reads a list file and writes a `package.xml`. Returns the output path, warnings, and number of types.        |
+| `packageXmlToList`   | Reads a `package.xml` and writes a list file. Returns the list contents and warnings.                        |
+| `parseManifestXml`   | Parses a `package.xml` string into `{ types: { name, members }[], version }`.                               |
+
+Types `ParsedManifest` and `ParsedManifestType` are exported too. Invalid input does not throw: problems come back in `warnings` and an empty output file is written, the same as the CLI.
+
+Installing the package also installs the plugin's Salesforce CLI dependencies (`@salesforce/core`, `@oclif/core`).
+
+---
+
 ## Use Cases
 
 ### CI/CD Pipelines
