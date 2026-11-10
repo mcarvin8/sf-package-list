@@ -133,6 +133,62 @@ jobs:
           fi
           echo "warnings: ${{ steps.to-xml.outputs.warnings }}"
 
+  content-round-trip-local:
+    name: content inputs round trip (local checkout)
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Convert list text to package.xml
+        id: to-xml
+        uses: ./
+        with:
+          mode: to-xml
+          package-list-content: |
+            ApexClass: MyClass, OtherClass
+            CustomObject: Account
+            Version: 62.0
+          package-xml: package.xml
+          fail-on-empty: true
+
+      - name: Convert the package.xml output back to list text
+        id: to-list
+        uses: ./
+        with:
+          mode: to-list
+          package-xml-content: ${{ steps.to-xml.outputs.package-xml }}
+          package-list: package.txt
+          fail-on-empty: true
+
+      - name: Use both source inputs (expected to fail)
+        id: both
+        continue-on-error: true
+        uses: ./
+        with:
+          mode: to-xml
+          package-list-content: 'ApexClass: MyClass'
+          package-list: test/samples/list-basic.txt
+
+      - name: Verify outputs and files
+        env:
+          PACKAGE_XML: ${{ steps.to-xml.outputs.package-xml }}
+          PACKAGE_LIST: ${{ steps.to-list.outputs.package-list }}
+          TYPES: ${{ steps.to-list.outputs.types }}
+          MEMBERS: ${{ steps.to-list.outputs.members }}
+          BOTH_OUTCOME: ${{ steps.both.outcome }}
+        run: |
+          set -euo pipefail
+          expected=$'ApexClass: MyClass, OtherClass\nCustomObject: Account\nVersion: 62.0'
+          [ "$PACKAGE_LIST" = "$expected" ] || { echo "Unexpected package-list output:"; echo "$PACKAGE_LIST"; exit 1; }
+          [ "$(cat package.txt)" = "$expected" ] || { echo "package.txt does not match the package-list output"; exit 1; }
+          # Command substitution strips trailing newlines on both sides.
+          [ "$(printf '%s' "$PACKAGE_XML")" = "$(cat package.xml)" ] || { echo "package-xml output does not match package.xml"; exit 1; }
+          [ "$TYPES" = "2" ] && [ "$MEMBERS" = "3" ] || { echo "Expected 2 types and 3 members, got $TYPES and $MEMBERS"; exit 1; }
+          [ "$BOTH_OUTCOME" = "failure" ] || { echo "Expected both source inputs to fail, outcome was $BOTH_OUTCOME"; exit 1; }
+          echo "Round trip OK"
+
   invalid-mode-failure-path-local:
     name: invalid mode failure path (local checkout)
     if: github.event_name == 'pull_request'

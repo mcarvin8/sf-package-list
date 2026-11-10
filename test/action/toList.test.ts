@@ -1,10 +1,10 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 
 import * as core from '@actions/core';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import { runToList as run } from '../../src/action/toList.js';
-import { packageXmlToList } from '../../src/core/packageXmlToList.js';
+import { convertXmlToList, packageXmlToList } from '../../src/core/packageXmlToList.js';
 import { parseManifestXml } from '../../src/core/parseManifest.js';
 
 vi.mock('@actions/core');
@@ -13,6 +13,8 @@ vi.mock('../../src/core/packageXmlToList.js');
 vi.mock('../../src/core/parseManifest.js');
 
 const packageXmlToListMock = packageXmlToList as unknown as Mock;
+const convertXmlToListMock = convertXmlToList as unknown as Mock;
+const writeFileMock = writeFile as unknown as Mock;
 const parseManifestXmlMock = parseManifestXml as unknown as Mock;
 const readFileMock = readFile as unknown as Mock;
 const getInputMock = core.getInput as unknown as Mock;
@@ -56,7 +58,10 @@ describe('GitHub Action entrypoint (to-list)', () => {
     expect(packageXmlToListMock).toHaveBeenCalledWith(
       expect.objectContaining({ xmlPath: undefined, listPath: 'package.txt' }),
     );
+    expect(readFileMock).not.toHaveBeenCalled();
     expect(parseManifestXmlMock).not.toHaveBeenCalled();
+    expect(core.setOutput).toHaveBeenCalledWith('types', 0);
+    expect(core.setOutput).toHaveBeenCalledWith('members', 0);
   });
 
   it('sets outputs and logs the written path on success', async () => {
@@ -65,7 +70,9 @@ describe('GitHub Action entrypoint (to-list)', () => {
 
     await run();
 
+    expect(readFileMock).toHaveBeenCalledWith('package.xml', 'utf-8');
     expect(core.setOutput).toHaveBeenCalledWith('package-list-path', 'out.txt');
+    expect(core.setOutput).toHaveBeenCalledWith('package-list', 'ApexClass: A');
     expect(core.setOutput).toHaveBeenCalledWith('types', 1);
     expect(core.setOutput).toHaveBeenCalledWith('members', 1);
     expect(core.setOutput).toHaveBeenCalledWith('warnings', '');
@@ -129,6 +136,80 @@ describe('GitHub Action entrypoint (to-list)', () => {
     await run();
 
     expect(core.setFailed).not.toHaveBeenCalled();
+  });
+
+  it('reports zero types and members when re-reading the input package.xml fails', async () => {
+    stubInputs({ 'package-xml': 'missing.xml' });
+    packageXmlToListMock.mockResolvedValue({ packageList: '', warnings: ['could not be read'] });
+    readFileMock.mockRejectedValue(new Error('ENOENT'));
+
+    await run();
+
+    expect(core.setOutput).toHaveBeenCalledWith('types', 0);
+    expect(core.setOutput).toHaveBeenCalledWith('members', 0);
+    expect(core.setFailed).not.toHaveBeenCalled();
+  });
+
+  describe('package-xml-content', () => {
+    const xmlContent = '<Package><types><members>A</members><name>ApexClass</name></types></Package>';
+
+    it('converts the content in memory and writes the list file', async () => {
+      stubInputs({ 'package-xml-content': xmlContent, 'package-list': 'out.txt' }, { 'no-api-version': true });
+      convertXmlToListMock.mockReturnValue({ packageList: 'ApexClass: A', warnings: [] });
+
+      await run();
+
+      expect(convertXmlToListMock).toHaveBeenCalledWith(xmlContent, { noApiVersion: true });
+      expect(packageXmlToListMock).not.toHaveBeenCalled();
+      expect(readFileMock).not.toHaveBeenCalled();
+      expect(writeFileMock).toHaveBeenCalledWith('out.txt', 'ApexClass: A');
+      expect(parseManifestXmlMock).toHaveBeenCalledWith(xmlContent);
+      expect(core.setOutput).toHaveBeenCalledWith('package-list-path', 'out.txt');
+      expect(core.setOutput).toHaveBeenCalledWith('package-list', 'ApexClass: A');
+      expect(core.setOutput).toHaveBeenCalledWith('types', 1);
+      expect(core.setOutput).toHaveBeenCalledWith('members', 1);
+      expect(core.setFailed).not.toHaveBeenCalled();
+    });
+
+    it('defaults the list file to package.txt', async () => {
+      stubInputs({ 'package-xml-content': xmlContent });
+      convertXmlToListMock.mockReturnValue({ packageList: 'ApexClass: A', warnings: [] });
+
+      await run();
+
+      expect(writeFileMock).toHaveBeenCalledWith('package.txt', 'ApexClass: A');
+    });
+
+    it('propagates warnings and fails on empty when the content is invalid', async () => {
+      stubInputs({ 'package-xml-content': '<nope/>' }, { 'fail-on-empty': true });
+      convertXmlToListMock.mockReturnValue({ packageList: '', warnings: ['invalid'] });
+      parseManifestXmlMock.mockImplementation(() => {
+        throw new Error('bad xml');
+      });
+
+      await run();
+
+      expect(core.warning).toHaveBeenCalledWith('invalid');
+      expect(core.setOutput).toHaveBeenCalledWith('package-list', '');
+      expect(core.setOutput).toHaveBeenCalledWith('types', 0);
+      expect(core.setFailed).toHaveBeenCalledWith(
+        'The package list has no types -- the provided package.xml was invalid, empty, or not provided.',
+      );
+    });
+
+    it('fails when both package-xml and package-xml-content are provided', async () => {
+      stubInputs({ 'package-xml-content': xmlContent, 'package-xml': 'package.xml' });
+
+      await run();
+
+      expect(core.setFailed).toHaveBeenCalledWith(
+        'Provide either package-xml or package-xml-content as the source package.xml, not both.',
+      );
+      expect(convertXmlToListMock).not.toHaveBeenCalled();
+      expect(packageXmlToListMock).not.toHaveBeenCalled();
+      expect(writeFileMock).not.toHaveBeenCalled();
+      expect(core.setOutput).not.toHaveBeenCalled();
+    });
   });
 
   it('fails the action with the error message when packageXmlToList throws', async () => {

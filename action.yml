@@ -21,6 +21,16 @@ inputs:
       In 'to-list' mode: output path for the generated package list (defaults to 'package.txt').
       In 'to-xml' mode: path to the source package list.
     required: false
+  package-xml-content:
+    description: >-
+      'to-list' mode only: package.xml text to convert, instead of reading a file from
+      'package-xml'. Use one or the other, not both. An empty value counts as not provided.
+    required: false
+  package-list-content:
+    description: >-
+      'to-xml' mode only: package list text to convert, instead of reading a file from
+      'package-list'. Use one or the other, not both. An empty value counts as not provided.
+    required: false
   no-api-version:
     description: 'Explicitly omit the API version from the generated output.'
     required: false
@@ -35,6 +45,10 @@ outputs:
     description: 'Path to the generated package list (to-list mode only).'
   package-xml-path:
     description: 'Path to the generated package.xml (to-xml mode only).'
+  package-list:
+    description: 'Text of the generated package list (to-list mode only).'
+  package-xml:
+    description: 'Text of the generated package.xml (to-xml mode only).'
   types:
     description: 'Number of distinct metadata types processed.'
   members:

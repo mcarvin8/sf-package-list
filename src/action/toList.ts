@@ -1,15 +1,14 @@
 'use strict';
 
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 
 import * as core from '@actions/core';
 
-import { packageXmlToList } from '../core/packageXmlToList.js';
+import { convertXmlToList, packageXmlToList } from '../core/packageXmlToList.js';
 import { parseManifestXml } from '../core/parseManifest.js';
 
-async function countTypesAndMembers(xmlPath: string): Promise<{ types: number; members: number }> {
+function countTypesAndMembers(xml: string): { types: number; members: number } {
   try {
-    const xml = await readFile(xmlPath, 'utf-8');
     const manifest = parseManifestXml(xml);
     return {
       types: manifest.types.length,
@@ -20,25 +19,50 @@ async function countTypesAndMembers(xmlPath: string): Promise<{ types: number; m
   }
 }
 
+async function countFromFile(xmlPath: string | undefined): Promise<{ types: number; members: number }> {
+  if (!xmlPath) return { types: 0, members: 0 };
+  try {
+    return countTypesAndMembers(await readFile(xmlPath, 'utf-8'));
+  } catch {
+    return { types: 0, members: 0 };
+  }
+}
+
 export async function runToList(): Promise<void> {
   try {
+    const xmlContent = core.getInput('package-xml-content');
     const xmlPath = core.getInput('package-xml') || undefined;
     const listPath = core.getInput('package-list') || 'package.txt';
     const noApiVersion = core.getBooleanInput('no-api-version');
     const failOnEmpty = core.getBooleanInput('fail-on-empty');
 
-    const result = await packageXmlToList({ xmlPath, listPath, noApiVersion });
-    const { types, members } = xmlPath ? await countTypesAndMembers(xmlPath) : { types: 0, members: 0 };
+    if (xmlContent && xmlPath) {
+      core.setFailed('Provide either package-xml or package-xml-content as the source package.xml, not both.');
+      return;
+    }
+
+    let packageList: string;
+    let warnings: string[];
+    let counts: { types: number; members: number };
+    if (xmlContent) {
+      ({ packageList, warnings } = convertXmlToList(xmlContent, { noApiVersion }));
+      await writeFile(listPath, packageList);
+      counts = countTypesAndMembers(xmlContent);
+    } else {
+      ({ packageList, warnings } = await packageXmlToList({ xmlPath, listPath, noApiVersion }));
+      counts = await countFromFile(xmlPath);
+    }
 
     core.setOutput('package-list-path', listPath);
-    core.setOutput('types', types);
-    core.setOutput('members', members);
-    core.setOutput('warnings', result.warnings.join('\n'));
+    core.setOutput('package-list', packageList);
+    core.setOutput('types', counts.types);
+    core.setOutput('members', counts.members);
+    core.setOutput('warnings', warnings.join('\n'));
 
-    result.warnings.forEach((warning) => core.warning(warning));
+    warnings.forEach((warning) => core.warning(warning));
     core.info(`Package list written to: ${listPath}`);
 
-    if (failOnEmpty && types === 0) {
+    if (failOnEmpty && counts.types === 0) {
       core.setFailed('The package list has no types -- the provided package.xml was invalid, empty, or not provided.');
     }
   } catch (error) {

@@ -16,6 +16,7 @@ Convert Salesforce `package.xml` manifests to and from a human-readable list for
   - [`sf sfpl list`](#sf-sfpl-list)
   - [`sf sfpl xml`](#sf-sfpl-xml)
 - [GitHub Action](#github-action)
+  - [Passing Text Instead of Files](#passing-text-instead-of-files)
   - [Inputs](#inputs)
   - [Outputs](#outputs)
 - [Programmatic API](#programmatic-api)
@@ -205,6 +206,28 @@ For GitHub Actions, this is also available as a native Action — no `sf` CLI or
     package-xml: package.xml
 ```
 
+### Passing Text Instead of Files
+
+When an earlier step produces the list or the `package.xml` as text, pass it to `package-list-content` or `package-xml-content`. You don't need to write it to a file first. The output file is still written, and the generated text is also available as the `package-xml` or `package-list` output.
+
+```yaml
+- name: Convert a list from an earlier step to package.xml
+  id: to-xml
+  uses: mcarvin8/sf-package-list@v3
+  with:
+    mode: to-xml
+    package-list-content: ${{ steps.metadata.outputs.list }}
+    package-xml: package.xml
+    fail-on-empty: true
+
+- name: Deploy
+  run: sf project deploy start --manifest "${{ steps.to-xml.outputs.package-xml-path }}"
+```
+
+Passing text through `with:` is safer than `run: echo "${{ ... }}" > package.txt`. Text from a PR body or commit message can contain shell syntax that a `run:` step would execute.
+
+Use either the content input or the matching path input as the source, not both. An empty content value counts as not provided. GitHub limits step outputs to 1 MB per job, which is well above the size of real manifests.
+
 ### Inputs
 
 | Input             | Description                                                                                                     | Required | Default        |
@@ -212,6 +235,8 @@ For GitHub Actions, this is also available as a native Action — no `sf` CLI or
 | `mode`               | Conversion direction: `to-list` (package.xml → list) or `to-xml` (list → package.xml).                             | **Yes**  |                 |
 | `package-xml`        | `to-list`: source `package.xml`. `to-xml`: output path for the generated `package.xml`.                            | No       | `package.xml`   |
 | `package-list`       | `to-list`: output path for the generated package list. `to-xml`: source package list.                              | No       | `package.txt`   |
+| `package-xml-content` | `to-list` only: `package.xml` text to convert, instead of the `package-xml` file.                                 | No       |                 |
+| `package-list-content` | `to-xml` only: package list text to convert, instead of the `package-list` file.                                 | No       |                 |
 | `no-api-version` | Omit the API version from the generated package output so Salesforce CLI can apply its [source API version precedence](https://developer.salesforce.com/docs/platform/sfdx-setup/guide/sfdx-setup-apiversion.html#sourceapiversion-order-of-precedence). | No | `false` |
 | `fail-on-empty`      | Fail the action if the generated output has no types.                                                             | No       | `false`         |
 
@@ -221,6 +246,8 @@ For GitHub Actions, this is also available as a native Action — no `sf` CLI or
 | --------------------- | ------------------------------------------------------------------------------------- |
 | `package-list-path`   | Path to the generated package list (`to-list` mode only).                          |
 | `package-xml-path`    | Path to the generated `package.xml` (`to-xml` mode only).                          |
+| `package-list`        | Text of the generated package list (`to-list` mode only).                          |
+| `package-xml`         | Text of the generated `package.xml` (`to-xml` mode only).                          |
 | `types`               | Number of distinct metadata types processed.                                       |
 | `members`             | Number of members processed.                                                       |
 | `api-version`         | API version used in the generated `package.xml` (`to-xml` mode only; empty when omitted). |
