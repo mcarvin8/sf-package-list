@@ -31,8 +31,8 @@ npm install --no-audit --no-fund --loglevel=error "$SPEC" typescript @types/node
 cp "$HERE/check.mjs" "$HERE/types.ts" "$HERE/tsconfig.json" .
 mkdir -p out
 
-# Read package.json from disk: the exports map does not expose "./package.json".
-VERSION="$(node -p "require('./node_modules/sf-package-list/package.json').version")"
+# Resolves through the "./package.json" subpath export, so this also checks that it stays exported.
+VERSION="$(node -p "require('sf-package-list/package.json').version")"
 echo "Installed: sf-package-list@$VERSION"
 
 echo "--- Type check"
