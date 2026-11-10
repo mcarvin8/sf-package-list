@@ -1,10 +1,10 @@
-import { readFile } from 'node:fs/promises';
+import { readFile, writeFile } from 'node:fs/promises';
 
 import * as core from '@actions/core';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import { runToXml as run } from '../../src/action/toXml.js';
-import { listToPackageXml } from '../../src/core/listToPackageXml.js';
+import { convertListToXml, listToPackageXml } from '../../src/core/listToPackageXml.js';
 import { parseManifestXml } from '../../src/core/parseManifest.js';
 
 vi.mock('@actions/core');
@@ -13,6 +13,8 @@ vi.mock('../../src/core/listToPackageXml.js');
 vi.mock('../../src/core/parseManifest.js');
 
 const listToPackageXmlMock = listToPackageXml as unknown as Mock;
+const convertListToXmlMock = convertListToXml as unknown as Mock;
+const writeFileMock = writeFile as unknown as Mock;
 const parseManifestXmlMock = parseManifestXml as unknown as Mock;
 const readFileMock = readFile as unknown as Mock;
 const getInputMock = core.getInput as unknown as Mock;
@@ -66,6 +68,7 @@ describe('GitHub Action entrypoint (to-xml)', () => {
 
     expect(readFileMock).toHaveBeenCalledWith('out.xml', 'utf-8');
     expect(core.setOutput).toHaveBeenCalledWith('package-xml-path', 'out.xml');
+    expect(core.setOutput).toHaveBeenCalledWith('package-xml', '<Package></Package>');
     expect(core.setOutput).toHaveBeenCalledWith('types', 1);
     expect(core.setOutput).toHaveBeenCalledWith('members', 1);
     expect(core.setOutput).toHaveBeenCalledWith('api-version', '60.0');
@@ -124,6 +127,63 @@ describe('GitHub Action entrypoint (to-xml)', () => {
     await run();
 
     expect(core.setFailed).not.toHaveBeenCalled();
+  });
+
+  describe('package-list-content', () => {
+    const listContent = 'ApexClass: A\nVersion: 60.0';
+    const generatedXml = '<Package><types><members>A</members><name>ApexClass</name></types></Package>';
+
+    it('converts the content in memory and writes the package.xml file', async () => {
+      stubInputs({ 'package-list-content': listContent, 'package-xml': 'out.xml' }, { 'no-api-version': true });
+      convertListToXmlMock.mockReturnValue({ packageXml: generatedXml, warnings: [], types: 1 });
+
+      await run();
+
+      expect(convertListToXmlMock).toHaveBeenCalledWith(listContent, { noApiVersion: true });
+      expect(listToPackageXmlMock).not.toHaveBeenCalled();
+      expect(readFileMock).not.toHaveBeenCalled();
+      expect(writeFileMock).toHaveBeenCalledWith('out.xml', generatedXml);
+      expect(parseManifestXmlMock).toHaveBeenCalledWith(generatedXml);
+      expect(core.setOutput).toHaveBeenCalledWith('package-xml-path', 'out.xml');
+      expect(core.setOutput).toHaveBeenCalledWith('package-xml', generatedXml);
+      expect(core.setOutput).toHaveBeenCalledWith('types', 1);
+      expect(core.setOutput).toHaveBeenCalledWith('members', 1);
+      expect(core.setOutput).toHaveBeenCalledWith('api-version', '60.0');
+      expect(core.setFailed).not.toHaveBeenCalled();
+    });
+
+    it('defaults the package.xml file to package.xml', async () => {
+      stubInputs({ 'package-list-content': listContent });
+      convertListToXmlMock.mockReturnValue({ packageXml: generatedXml, warnings: [], types: 1 });
+
+      await run();
+
+      expect(writeFileMock).toHaveBeenCalledWith('package.xml', generatedXml);
+    });
+
+    it('propagates warnings from convertListToXml', async () => {
+      stubInputs({ 'package-list-content': 'bad line' });
+      convertListToXmlMock.mockReturnValue({ packageXml: generatedXml, warnings: ['skipped bad line'], types: 0 });
+
+      await run();
+
+      expect(core.warning).toHaveBeenCalledWith('skipped bad line');
+      expect(core.setOutput).toHaveBeenCalledWith('warnings', 'skipped bad line');
+    });
+
+    it('fails when both package-list and package-list-content are provided', async () => {
+      stubInputs({ 'package-list-content': listContent, 'package-list': 'package.txt' });
+
+      await run();
+
+      expect(core.setFailed).toHaveBeenCalledWith(
+        'Provide either package-list or package-list-content as the source list, not both.',
+      );
+      expect(convertListToXmlMock).not.toHaveBeenCalled();
+      expect(listToPackageXmlMock).not.toHaveBeenCalled();
+      expect(writeFileMock).not.toHaveBeenCalled();
+      expect(core.setOutput).not.toHaveBeenCalled();
+    });
   });
 
   it('fails the action with the error message when listToPackageXml throws', async () => {
