@@ -5,6 +5,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.0](https://github.com/mcarvin8/sf-package-list/compare/v3.3.0...v3.4.0) (2026-11-10)
+
+
+### Features
+
+* **action:** accept and output package text ([#114](https://github.com/mcarvin8/sf-package-list/issues/114)) ([924dba1](https://github.com/mcarvin8/sf-package-list/commit/924dba1e23253ce74a0c02cde1931467548fe1bc))
+* add string conversion API ([#112](https://github.com/mcarvin8/sf-package-list/issues/112)) ([917bba6](https://github.com/mcarvin8/sf-package-list/commit/917bba625e3aede5c0aecb595bd5b5b1c00e349e))
+
 ## [3.3.0](https://github.com/mcarvin8/sf-package-list/compare/v3.2.1...v3.3.0) (2026-11-10)
 
 
