@@ -18,7 +18,13 @@ describe('public API', () => {
   });
 
   it('exposes only the documented functions', () => {
-    expect(Object.keys(api).sort()).toEqual(['listToPackageXml', 'packageXmlToList', 'parseManifestXml']);
+    expect(Object.keys(api).sort()).toEqual([
+      'convertListToXml',
+      'convertXmlToList',
+      'listToPackageXml',
+      'packageXmlToList',
+      'parseManifestXml',
+    ]);
   });
 
   it('round-trips a list through package.xml', async () => {

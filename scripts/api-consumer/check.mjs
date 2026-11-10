@@ -10,7 +10,13 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 import * as api from 'sf-package-list';
-import { listToPackageXml, packageXmlToList, parseManifestXml } from 'sf-package-list';
+import {
+  convertListToXml,
+  convertXmlToList,
+  listToPackageXml,
+  packageXmlToList,
+  parseManifestXml,
+} from 'sf-package-list';
 
 const [samplesDir, outDir] = process.argv.slice(2);
 assert.ok(samplesDir && outDir, 'usage: check.mjs <samplesDir> <outDir>');
@@ -27,10 +33,39 @@ async function check(name, fn) {
 }
 
 await check('exports', () => {
-  assert.deepEqual(Object.keys(api).sort(), ['listToPackageXml', 'packageXmlToList', 'parseManifestXml']);
-  for (const fn of [listToPackageXml, packageXmlToList, parseManifestXml]) {
+  assert.deepEqual(Object.keys(api).sort(), [
+    'convertListToXml',
+    'convertXmlToList',
+    'listToPackageXml',
+    'packageXmlToList',
+    'parseManifestXml',
+  ]);
+  for (const fn of [convertListToXml, convertXmlToList, listToPackageXml, packageXmlToList, parseManifestXml]) {
     assert.equal(typeof fn, 'function');
   }
+});
+
+await check('string API converts in memory and matches the fixtures', async () => {
+  const list = await read(sample('list-with-api-version.txt'));
+  const xml = await read(sample('package-with-api-version.xml'));
+
+  const toXml = convertListToXml(list);
+  assert.equal(toXml.packageXml.trimEnd(), xml);
+  assert.equal(toXml.types, 1);
+  assert.deepEqual(toXml.warnings, []);
+
+  assert.deepEqual(convertXmlToList(xml), { packageList: list, warnings: [] });
+  assert.equal(convertXmlToList(xml, { noApiVersion: true }).packageList, 'StandardValueSet: Glengarry_Leadz');
+});
+
+await check('string API warns instead of throwing', () => {
+  const badList = convertListToXml('ApexClass PrepareMySandbox');
+  assert.equal(badList.types, 0);
+  assert.equal(badList.warnings.length, 1);
+
+  const badXml = convertXmlToList('<NotAPackage/>');
+  assert.equal(badXml.packageList, '');
+  assert.equal(badXml.warnings.length, 1);
 });
 
 await check('list -> package.xml matches the fixture', async () => {

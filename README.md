@@ -215,34 +215,49 @@ The conversion functions are also exported for use from Node.js scripts:
 npm install sf-package-list
 ```
 
+Convert strings in memory, with no files involved:
+
 ```typescript
-import { listToPackageXml, packageXmlToList, parseManifestXml } from 'sf-package-list';
+import { convertListToXml, convertXmlToList } from 'sf-package-list';
 
 // list → package.xml
+const { packageXml, warnings, types } = convertListToXml('ApexClass: MyClass\nVersion: 62.0');
+
+// package.xml → list
+const { packageList } = convertXmlToList(packageXml, { noApiVersion: true });
+```
+
+Or convert files, the same way the CLI does:
+
+```typescript
+import { listToPackageXml, packageXmlToList } from 'sf-package-list';
+
+// list file → package.xml file
 const { xmlPath, warnings, types } = await listToPackageXml({
   listPath: 'package.txt',
   xmlPath: 'package.xml',
   noApiVersion: false,
 });
 
-// package.xml → list
+// package.xml file → list file
 const { packageList } = await packageXmlToList({
   xmlPath: 'package.xml',
   listPath: 'package.txt',
   noApiVersion: false,
 });
-
-// parse a package.xml string without touching the filesystem
-const { types: parsed, version } = parseManifestXml(xmlString);
 ```
 
 | Export               | Description                                                                                                  |
 | -------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `convertListToXml`   | Converts list text to `package.xml` text. Returns `{ packageXml, warnings, types }`.                          |
+| `convertXmlToList`   | Converts `package.xml` text to list text. Returns `{ packageList, warnings }`.                                |
 | `listToPackageXml`   | Reads a list file and writes a `package.xml`. Returns the output path, warnings, and number of types.        |
 | `packageXmlToList`   | Reads a `package.xml` and writes a list file. Returns the list contents and warnings.                        |
-| `parseManifestXml`   | Parses a `package.xml` string into `{ types: { name, members }[], version }`.                               |
+| `parseManifestXml`   | Parses a `package.xml` string into `{ types: { name, members }[], version }`. Throws if the XML is invalid.  |
 
-Types `ParsedManifest` and `ParsedManifestType` are exported too. Invalid input does not throw: problems come back in `warnings` and an empty output file is written, the same as the CLI.
+The `convert*` functions take an optional `{ noApiVersion }` (default `false`). Types `ConvertListToXmlResult`, `ConvertXmlToListResult`, `ParsedManifest` and `ParsedManifestType` are exported too.
+
+The convert and file functions do not throw on bad input. Problems come back in `warnings` and the output is empty, the same as the CLI. `parseManifestXml` is the exception: it throws on XML that is not a valid manifest.
 
 Installing the package also installs the plugin's Salesforce CLI dependencies (`@salesforce/core`, `@oclif/core`).
 

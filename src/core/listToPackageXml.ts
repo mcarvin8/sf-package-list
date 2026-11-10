@@ -3,6 +3,26 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { buildXml } from '../utils/xmlBuilder.js';
 import { PackageManifestObject } from './types.js';
 
+export type ConvertListToXmlResult = {
+  packageXml: string;
+  warnings: string[];
+  types: number;
+};
+
+/**
+ * Converts package list text to package.xml text, in memory. An empty list
+ * yields an empty package.xml. Malformed lines are skipped and reported in
+ * `warnings`; this function does not throw on bad input.
+ */
+export function convertListToXml(
+  list: string,
+  { noApiVersion = false }: { noApiVersion?: boolean } = {},
+): ConvertListToXmlResult {
+  const warnings: string[] = [];
+  const packageJson = parseListLines(list.split('\n'), noApiVersion, warnings);
+  return { packageXml: buildXmlString(packageJson), warnings, types: packageJson.Package.types.length };
+}
+
 export async function listToPackageXml({
   listPath,
   xmlPath,
@@ -13,10 +33,8 @@ export async function listToPackageXml({
   noApiVersion: boolean;
 }): Promise<{ xmlPath: string; warnings: string[]; types: number }> {
   const warnings: string[] = [];
-  let xmlString: string;
-  let types = 0;
 
-  let listString: string | undefined;
+  let listString = '';
   if (listPath) {
     try {
       listString = await readFile(listPath, 'utf-8');
@@ -27,32 +45,13 @@ export async function listToPackageXml({
     warnings.push('No list file provided. Using empty package.xml.');
   }
 
-  if (listString) {
-    const lines = listString.split('\n');
-    const packageJson = parseListLines(lines, noApiVersion, warnings);
-    types = packageJson.Package.types.length;
-    xmlString = buildXmlString(packageJson);
-  } else {
-    xmlString = generateEmptyPackageXml();
-  }
-
-  await writeFile(xmlPath, xmlString);
-  return { xmlPath, warnings, types };
+  const result = convertListToXml(listString, { noApiVersion });
+  await writeFile(xmlPath, result.packageXml);
+  return { xmlPath, warnings: [...warnings, ...result.warnings], types: result.types };
 }
 
 function buildXmlString(packageJson: PackageManifestObject): string {
   return '<?xml version="1.0" encoding="UTF-8"?>\n' + buildXml(packageJson);
-}
-
-function generateEmptyPackageXml(): string {
-  const emptyPackage: PackageManifestObject = {
-    Package: {
-      '@_xmlns': 'http://soap.sforce.com/2006/04/metadata',
-      types: [],
-      version: undefined,
-    },
-  };
-  return buildXmlString(emptyPackage);
 }
 
 function parseListLines(lines: string[], noApiVersion: boolean, warnings: string[]): PackageManifestObject {
