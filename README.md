@@ -9,8 +9,6 @@
 
 Convert Salesforce `package.xml` manifests to and from a human-readable list format. Available as a **Salesforce CLI plugin** for any provider, and as a **native GitHub Action** for GitHub Actions users who want to skip installing the CLI.
 
-## Table of Contents
-
 - [List Format](#list-format)
 - [Salesforce CLI](#salesforce-cli)
   - [Requirements](#requirements)

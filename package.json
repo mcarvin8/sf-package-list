@@ -331,6 +331,6 @@
     "url": "https://github.com/mcarvin8/sf-package-list/issues"
   },
   "allowScripts": {
-    "esbuild@0.28.1": true
+    "esbuild@0.28.2": true
   }
 }
