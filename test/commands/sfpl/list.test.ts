@@ -163,7 +163,7 @@ describe('sfpl list/xml', () => {
       xmlPath: outputXml,
       noApiVersion: false,
     });
-    expect(warnings).toContain(`List file "${badPath}" could not be read. Using empty package.xml.`);
+    expect(warnings).toEqual([`List file "${badPath}" could not be read. Using empty package.xml.`]);
     const actualOutput = await readFile(xmlPath, 'utf-8');
     expect(actualOutput).toContain('xmlns="http://soap.sforce.com/2006/04/metadata"');
     expect(actualOutput).not.toContain('<types>');
@@ -176,7 +176,7 @@ describe('sfpl list/xml', () => {
       xmlPath: outputXml,
       noApiVersion: false,
     });
-    expect(warnings).toContain('No list file provided. Using empty package.xml.');
+    expect(warnings).toEqual(['No list file provided. Using empty package.xml.']);
     const actualOutput = await readFile(xmlPath, 'utf-8');
     expect(actualOutput).toContain('xmlns="http://soap.sforce.com/2006/04/metadata"');
     expect(actualOutput).not.toContain('<types>');

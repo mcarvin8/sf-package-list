@@ -4,6 +4,10 @@
 // Fails if the package stops shipping types, a public type is renamed or removed, or
 // a signature changes in a way that breaks existing callers.
 import {
+  type ConvertListToXmlResult,
+  type ConvertXmlToListResult,
+  convertListToXml,
+  convertXmlToList,
   listToPackageXml,
   type ParsedManifest,
   type ParsedManifestType,
@@ -33,6 +37,19 @@ async function consume(): Promise<void> {
   const members: string[] = first.members;
   const version: string | null = parsed.version;
 
+  const listToXml: ConvertListToXmlResult = convertListToXml('ApexClass: A', { noApiVersion: true });
+  const packageXml: string = listToXml.packageXml;
+  const listTypes: number = listToXml.types;
+  const xmlToList: ConvertXmlToListResult = convertXmlToList(packageXml);
+  const roundTripped: string = xmlToList.packageList;
+  const xmlToListWarnings: string[] = xmlToList.warnings;
+  // options are optional on the string API
+  convertListToXml('ApexClass: A');
+  convertXmlToList(packageXml, {});
+
+  // @ts-expect-error -- the string API takes text, not a file options object
+  convertListToXml({ listPath: 'package.txt' });
+
   // @ts-expect-error -- xmlPath is required
   await listToPackageXml({ listPath: 'package.txt', noApiVersion: false });
 
@@ -43,6 +60,7 @@ async function consume(): Promise<void> {
   parseManifestXml({ xmlPath: 'package.xml' });
 
   void [xmlPath, types, xmlWarnings, packageList, listWarnings, name, members, version];
+  void [listTypes, roundTripped, xmlToListWarnings];
 }
 
 void consume;
