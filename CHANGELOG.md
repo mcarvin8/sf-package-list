@@ -5,6 +5,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/mcarvin8/sf-package-list/compare/v3.2.1...v3.3.0) (2026-11-10)
+
+
+### Features
+
+* export programmatic API ([#110](https://github.com/mcarvin8/sf-package-list/issues/110)) ([11fe413](https://github.com/mcarvin8/sf-package-list/commit/11fe413eba77bb3685546d09cff0f6a58f4ee5a9))
+
 ## [3.2.1](https://github.com/mcarvin8/sf-package-list/compare/v3.2.0...v3.2.1) (2026-11-09)
 
 
