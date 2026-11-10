@@ -9,27 +9,32 @@
 
 Convert Salesforce `package.xml` manifests to and from a human-readable list format. Available as a **Salesforce CLI plugin** for any provider, and as a **native GitHub Action** for GitHub Actions users who want to skip installing the CLI.
 
-- [List Format](#list-format)
-- [Salesforce CLI](#salesforce-cli)
-  - [Requirements](#requirements)
-  - [Install](#install)
-  - [`sf sfpl list`](#sf-sfpl-list)
-  - [`sf sfpl xml`](#sf-sfpl-xml)
-- [GitHub Action](#github-action)
-  - [Passing Text Instead of Files](#passing-text-instead-of-files)
-  - [Inputs](#inputs)
-  - [Outputs](#outputs)
-- [Programmatic API](#programmatic-api)
-- [Use Cases](#use-cases)
-  - [CI/CD Pipelines](#cicd-pipelines)
-  - [Controlled Destructive Deployments](#controlled-destructive-deployments)
-  - [Pipeline-Driven Metadata Selection](#pipeline-driven-metadata-selection)
-  - [Release Management and Change Review](#release-management-and-change-review)
-  - [Metadata-as-Data Automation](#metadata-as-data-automation)
-  - [Documentation and Communication](#documentation-and-communication)
-- [Troubleshooting](#troubleshooting)
-- [Issues](#issues)
-- [License](#license)
+<!-- TABLE OF CONTENTS -->
+<details>
+  <summary>Table of Contents</summary>
+
+  - [List Format](#list-format)
+  - [Salesforce CLI](#salesforce-cli)
+    - [Requirements](#requirements)
+    - [Install](#install)
+    - [`sf sfpl list`](#sf-sfpl-list)
+    - [`sf sfpl xml`](#sf-sfpl-xml)
+  - [GitHub Action](#github-action)
+    - [Passing Text Instead of Files](#passing-text-instead-of-files)
+    - [Inputs](#inputs)
+    - [Outputs](#outputs)
+  - [Programmatic API](#programmatic-api)
+  - [Use Cases](#use-cases)
+    - [CI/CD Pipelines](#cicd-pipelines)
+    - [Controlled Destructive Deployments](#controlled-destructive-deployments)
+    - [Pipeline-Driven Metadata Selection](#pipeline-driven-metadata-selection)
+    - [Release Management and Change Review](#release-management-and-change-review)
+    - [Metadata-as-Data Automation](#metadata-as-data-automation)
+    - [Documentation and Communication](#documentation-and-communication)
+  - [Troubleshooting](#troubleshooting)
+  - [Issues](#issues)
+  - [License](#license)
+</details>
 
 ---
 
